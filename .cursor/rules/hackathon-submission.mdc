@@ -1,0 +1,28 @@
+---
+description: Treat HonestAgent as a micro1 Agentic Workflows Hackathon submission in progress. Load project skills from .cursor/skills/ in gate order.
+alwaysApply: true
+---
+
+# Hackathon submission (work in progress)
+
+This repository is a **micro1 Agentic Workflows Hackathon** submission in progress, not a finished production product.
+
+## Skills (Cursor project skills)
+
+Load from `.cursor/skills/` (each folder contains `SKILL.md`). **Start with** `micro1-hackathon-orchestrator`, then follow its gate table. Do not skip gates.
+
+| Gate | Skill directory |
+|---|---|
+| 1 | `hackathon-problem-framing` |
+| 2 / 4 | `hackathon-agent-engineering` |
+| 3 / 5 | `hackathon-baseline-and-eval` |
+| 4 (log live) | `hackathon-improvement-changelog` |
+| 6 | `hackathon-judging-rubric` |
+| 7 | `hackathon-ground-rules-compliance` |
+| 8 | `hackathon-final-deliverables` |
+
+## Do not confuse with product skills
+
+- Repo-root `SKILL.md` and `skills/honest-agent-launch-readiness/` are **runtime guardrail / launch-readiness** instructions for agents *using* HonestAgent, not the hackathon judging workflow.
+- Never fabricate eval numbers. Log changelog rows in the same turn as a design change.
+- Consequential actions stay deterministic + human-checkpointed (Ground Rules 04/05).
