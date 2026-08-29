@@ -5,7 +5,7 @@
 | Sprint | `CP-7` |
 | Status | `PARTIAL — local security and dependency evidence PASS; deployment operations NOT MEASURED` |
 | Timestamp UTC | `2026-08-29 11:00:00` |
-| Result commit | `{filled after commit}` |
+| Result commit | `aa2973e` |
 
 ## Verification
 
