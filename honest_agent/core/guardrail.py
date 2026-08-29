@@ -8,6 +8,7 @@ from typing import Dict, Optional
 
 from honest_agent.core.checkpoints import CheckpointStore, FileCheckpointStore
 from honest_agent.core.evaluator import ContextEvaluator
+from honest_agent.core.handoff import HandoffError, HandoffSigner
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.core.policy import ActionPolicy
 from honest_agent.core.verifier import VerifierEngine
@@ -31,6 +32,7 @@ class HonestGuard:
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
         self.store = store or FileCheckpointStore(self.config.checkpoint_path)
+        self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds)
         self.policy = policy or ActionPolicy()
         self.check_count = 0
         self.pending: Dict[str, GuardDecision] = {}
@@ -118,6 +120,8 @@ class HonestGuard:
             self.pending_requests[decision.trajectory_id] = request
             self.store.put_pending(request, decision)
         else:
+            if status == DecisionStatus.PROCEED:
+                decision.handoff_token = self.signer.issue(request, decision).token
             self.store.put_resolved(request, decision)
         decision.reasoning = f"{decision.reasoning}; latency_ms={(time.perf_counter() - started) * 1000:.3f}"
         decision.trajectory_path = str(self.logger.write(request, decision))
@@ -148,7 +152,20 @@ class HonestGuard:
             decision.status = status
             decision.action_taken = action
             decision.human_checkpoint = HumanCheckpoint(status=checkpoint_status, reviewer=reviewer)
+            if status == DecisionStatus.PROCEED:
+                decision.handoff_token = self.signer.issue(request, decision).token
             self.resolved[trajectory_id] = decision
             decision.trajectory_path = str(self.logger.write(request, decision))
             self.store.put_resolved(request, decision)
             return decision
+
+    def validate_handoff(self, token: str, request: EvaluationRequest, trajectory_id: str) -> bool:
+        decision = self.resolved.get(trajectory_id) or self.store.get_resolved(trajectory_id)
+        if decision is None:
+            return False
+        try:
+            self.signer.validate(token, request, decision)
+        except HandoffError:
+            return False
+        return True
+

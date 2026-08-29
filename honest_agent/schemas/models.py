@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -79,6 +81,16 @@ class HumanCheckpoint(BaseModel):
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
+class ExecutionHandoff(BaseModel):
+    trajectory_id: str
+    tool_name: str
+    payload_hash: str
+    policy_version: str
+    action_class: ActionClass
+    expires_at: int
+    token: str
+
+
 class GuardDecision(BaseModel):
     status: DecisionStatus
     confidence_score: float = Field(ge=0.0, le=1.0)
@@ -91,6 +103,7 @@ class GuardDecision(BaseModel):
     human_checkpoint: Optional[HumanCheckpoint] = None
     trajectory_id: str = Field(default_factory=lambda: str(uuid4()))
     trajectory_path: Optional[str] = None
+    handoff_token: Optional[str] = None
     context_token_count: int = 0
     context_token_ratio: float = 0.0
     action_taken: str
@@ -134,3 +147,5 @@ class Config(BaseModel):
     max_checks: Optional[int] = Field(default=None, gt=0)
     trajectory_dir: str = "trajectories"
     checkpoint_path: str = "trajectories/checkpoints.json"
+    handoff_secret: str = "honest-agent-development-secret"
+    handoff_ttl_seconds: int = Field(default=300, gt=0)
