@@ -16,15 +16,17 @@ A qualified prospect has at least two of the following signals: agents can write
 
 ## Product packaging
 
+The commercial model assumes a proprietary core. Public repository visibility is for evaluation and does not grant rights to copy, fork, redistribute, host, resell, or use the software in a client engagement. Every paid pilot, subscription, implementation, private deployment, or managed service requires a written commercial license or services agreement that states the permitted customer, environment, term, support, and data boundaries. The prices below are discovery hypotheses, not automatic permissions.
+
 | Package | Intended customer | Proposed price | Included |
 |---|---|---:|---|
-| Community | Individual developers and open-source projects | Free | Self-hosted core, deterministic verifier, local trajectory logs, proxy, SDK, MCP adapter, community support. |
+| Evaluation | Prospective customers evaluating the product | Free or time-limited | Unaltered internal evaluation with synthetic data; no redistribution, client delivery, production use, or commercial deployment. |
 | Team | One product team moving an agent into controlled production | $1,500/month | Hosted control endpoint or supported self-hosting, policy registry, shared review queue, retention controls, integration support, monthly reliability review. |
 | Business | Multiple teams with governance and audit requirements | $5,000–$10,000/month | SSO/RBAC, durable audit storage, environment separation, policy versioning, provider adapters, SLA, quarterly control review, priority support. |
 | Enterprise | Regulated or high-volume organizations | Custom annual contract, typically $75k–$200k ARR starting range | Private deployment, data residency, dedicated tenant, custom integrations, security review support, uptime and response commitments, implementation services. |
 | Advisory / implementation | Teams that need help designing controls | $15k–$40k fixed engagement | Threat model, policy taxonomy, integration into one agent workflow, benchmark design, reviewer operating procedure, handoff documentation. |
 
-The proposed prices are **business hypotheses for client discovery**, not claims about competitor list prices. The pricing logic intentionally separates open-source adoption from paid risk reduction: software access is inexpensive at the bottom, while governance, durable audit, support, private deployment, and integration work create the commercial value.
+The proposed prices are **business hypotheses for client discovery**, not claims about competitor list prices or automatic license grants. The pricing logic separates limited evaluation from paid risk reduction: governance, durable audit, support, private deployment, and integration work create the commercial value.
 
 ## Value proposition by buyer
 

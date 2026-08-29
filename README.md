@@ -35,6 +35,8 @@ PYTHONPATH=. python3 tests/deep_eval.py
 
 The default path is deterministic and credential-free. It uses synthetic fixtures and does not execute real external side effects.
 
+> **Permission notice:** This repository is not open source. The source is visible for evaluation, but copying, modifying, redistributing, hosting, embedding in a client deliverable, operating in production, or using HonestAgent commercially requires prior written permission under [`LICENSE`](LICENSE). See the [usage examples](docs/examples/README.md) for evaluation and licensed client-integration patterns.
+
 ## Minimal usage
 
 ```python
@@ -66,6 +68,10 @@ The guard evaluates and records; it does not own the customer’s executor.
 | Python SDK | Applications that own their tool functions | [`docs/integrations/python-sdk.md`](docs/integrations/python-sdk.md) |
 | IDE skill | Agent instructions and project-level guardrail conventions | [`SKILL.md`](SKILL.md) |
 
+## Usage examples
+
+The repository includes practical, non-secret examples for the Python SDK, HTTP proxy, reviewer checkpoint flow, MCP integration, and a commercial pilot. Start with [`docs/examples/README.md`](docs/examples/README.md). Examples are illustrative: they do not grant a license, authorize production use, or replace a signed customer agreement.
+
 ## Documentation
 
 The documentation is organized by audience:
@@ -85,7 +91,7 @@ The model verifier never directly authorizes an irreversible action. Determinist
 
 ## Evaluation status
 
-The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest verified run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 16.4/29.6 ms on the audit machine. The repository regression suite contains 80 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency.
+The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest verified run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 16.4/29.6 ms on the audit machine. The repository regression suite contains 81 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency.
 
 Run the reproducible evaluation with:
 
@@ -96,8 +102,8 @@ PYTHONPATH=. python3 tests/benchmark.py
 
 ## Project status
 
-This is an early open-source foundation with policy lifecycle, provider fault handling, durable checkpoint storage, reviewer authentication, executor handoff validation, platform-security boundaries, and release-gate controls implemented. The current release remains `NO-GO` for unrestricted production; see [`docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md`](docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md) and [`docs/operations/production-readiness.md`](docs/operations/production-readiness.md) before deploying beyond a controlled pilot.
+This is an early proprietary foundation with policy lifecycle, provider fault handling, durable checkpoint storage, reviewer authentication, executor handoff validation, platform-security boundaries, and release-gate controls implemented. The current release remains `NO-GO` for unrestricted production; see [`docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md`](docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md) and [`docs/operations/production-readiness.md`](docs/operations/production-readiness.md) before deploying beyond a controlled pilot.
 
-## License
+## License and commercial permission
 
-Honest Agent is released under the Apache License 2.0. See [`LICENSE`](LICENSE).
+HonestAgent is proprietary software under the [HonestAgent Proprietary License](LICENSE). No default right is granted to copy, fork, modify, redistribute, host, resell, or use the Materials for client or revenue-generating work. A signed commercial license or services agreement is required for paid pilots, production deployment, managed service, consulting deliverables, and any other commercial use. The pricing examples in [`docs/product/business-model.md`](docs/product/business-model.md) are business hypotheses, not a license grant or a binding offer.

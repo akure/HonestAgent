@@ -55,4 +55,4 @@ The compatibility route extracts message content and optional metadata:
 }
 ```
 
-The current open-source prototype returns a simulated completion after approval. A production adapter should forward only after the guard decision and should authenticate both the caller and reviewer endpoints.
+The current proprietary prototype returns a simulated completion after approval. Any client production adapter requires a separate written commercial license and must forward only after the guard decision while authenticating both the caller and reviewer endpoints.
