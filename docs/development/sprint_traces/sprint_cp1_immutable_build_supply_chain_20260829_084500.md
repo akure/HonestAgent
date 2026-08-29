@@ -6,7 +6,7 @@
 | Status | `PARTIAL — source/package evidence PASS; container image digest NOT MEASURED` |
 | Timestamp UTC | `2026-08-29 08:45:00` |
 | Source commit | `d1fad93fbd8a5ca1559be710068a850bf6e375c0` |
-| Result commit | `{filled after commit}` |
+| Result commit | `26905ef` |
 
 ## Scope
 
