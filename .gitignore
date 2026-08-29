@@ -9,6 +9,7 @@ htmlcov/
 .env.*
 !.env.example
 trajectories/*.json
+trajectories/*.lock
 benchmark_results.json
 deep_eval_results.json
 *_stdout.txt

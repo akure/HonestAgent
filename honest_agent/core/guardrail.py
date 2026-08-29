@@ -31,7 +31,7 @@ class HonestGuard:
         self.evaluator = ContextEvaluator()
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
-        self.store = store or FileCheckpointStore(self.config.checkpoint_path)
+        self.store = store or FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds)
         self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds)
         self.policy = policy or ActionPolicy()
         self.check_count = 0
@@ -154,10 +154,11 @@ class HonestGuard:
             decision.human_checkpoint = HumanCheckpoint(status=checkpoint_status, reviewer=reviewer)
             if status == DecisionStatus.PROCEED:
                 decision.handoff_token = self.signer.issue(request, decision).token
-            self.resolved[trajectory_id] = decision
-            decision.trajectory_path = str(self.logger.write(request, decision))
-            self.store.put_resolved(request, decision)
-            return decision
+            winner = self.store.resolve_pending(request, decision)
+            self.resolved[trajectory_id] = winner
+            if winner.model_dump() == decision.model_dump():
+                decision.trajectory_path = str(self.logger.write(request, decision))
+            return winner
 
     def validate_handoff(self, token: str, request: EvaluationRequest, trajectory_id: str) -> bool:
         decision = self.resolved.get(trajectory_id) or self.store.get_resolved(trajectory_id)

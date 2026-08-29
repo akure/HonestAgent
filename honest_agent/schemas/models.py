@@ -152,3 +152,4 @@ class Config(BaseModel):
     reviewer_auth_secret: str = "honest-agent-reviewer-development-secret"
     require_reviewer_auth: bool = False
     reviewer_token_ttl_seconds: int = Field(default=900, gt=0)
+    checkpoint_retention_seconds: int | None = Field(default=None, gt=0)
