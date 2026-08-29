@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import time
 from typing import Any, Dict
 
@@ -7,6 +8,7 @@ from fastapi import FastAPI
 
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.core.logger import TrajectoryLogger
+from honest_agent.interfaces.upstream import UpstreamClient, UpstreamError
 from honest_agent.interfaces.webhooks import build_router
 from honest_agent.schemas.models import Config, EvaluationRequest
 
@@ -14,6 +16,7 @@ from honest_agent.schemas.models import Config, EvaluationRequest
 app = FastAPI(title="Honest Agent Runtime Gateway", version="0.1.0")
 guard = HonestGuard()
 logger = TrajectoryLogger(guard.config.trajectory_dir)
+upstream = UpstreamClient(os.getenv("HONEST_AGENT_UPSTREAM_URL"))
 app.include_router(build_router(guard))
 
 
@@ -62,6 +65,15 @@ async def chat_completions(payload: Dict[str, Any]):
             "choices": [],
             "honest_agent": {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)},
         }
+    if upstream.enabled:
+        forwarded = dict(payload)
+        forwarded.pop("honest_agent", None)
+        try:
+            response = await upstream.chat_completions(forwarded)
+        except UpstreamError as exc:
+            return {"id": decision.trajectory_id, "object": "honest_agent.upstream_error", "choices": [], "error": str(exc), "honest_agent": {"status": "UPSTREAM_ERROR", "decision": decision.model_dump(), "trajectory_path": str(path)}}
+        response["honest_agent"] = {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)}
+        return response
     return {
         "id": decision.trajectory_id,
         "object": "chat.completion",
