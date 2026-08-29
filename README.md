@@ -85,7 +85,7 @@ The model verifier never directly authorizes an irreversible action. Determinist
 
 ## Evaluation status
 
-The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest recorded run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and 16/16 regression tests passing. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency.
+The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest verified run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 16.4/29.6 ms on the audit machine. The repository regression suite contains 80 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency.
 
 Run the reproducible evaluation with:
 
@@ -96,7 +96,7 @@ PYTHONPATH=. python3 tests/benchmark.py
 
 ## Project status
 
-This is an early open-source foundation. The next planned work is an explicit policy registry, provider adapter contract tests, durable checkpoint storage, authentication, and multi-process audit semantics. See [`docs/operations/production-readiness.md`](docs/operations/production-readiness.md) before deploying beyond a controlled pilot.
+This is an early open-source foundation with policy lifecycle, provider fault handling, durable checkpoint storage, reviewer authentication, executor handoff validation, platform-security boundaries, and release-gate controls implemented. The current release remains `NO-GO` for unrestricted production; see [`docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md`](docs/release/conditional-pilot-evidence-sprint-plan_20260829_082500.md) and [`docs/operations/production-readiness.md`](docs/operations/production-readiness.md) before deploying beyond a controlled pilot.
 
 ## License
 

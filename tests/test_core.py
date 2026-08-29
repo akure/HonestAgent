@@ -50,3 +50,10 @@ def test_proxy_health_and_paused_shape():
     response = client.post("/v1/guard", json={"context": "missing maybe", "tool_name": "write_file", "tool_input": {"path": "unknown"}})
     assert response.status_code == 200
     assert response.json()["decision"]["status"] == "PAUSED"
+
+
+def test_guard_rejects_oversized_payload():
+    client = TestClient(app)
+    response = client.post("/v1/guard", json={"context": "x" * 1_000_001, "tool_name": "lookup", "tool_input": {}})
+    assert response.status_code == 413
+    assert response.json()["detail"] == "request payload exceeds configured limit"

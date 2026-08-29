@@ -5,7 +5,8 @@ import os
 import time
 from typing import Any, Dict
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 
 from honest_agent.core.executor import ExecutionBlocked, ExecutorGateway
 from honest_agent.core.guardrail import HonestGuard
@@ -18,6 +19,18 @@ from honest_agent.schemas.models import Config, EvaluationRequest
 
 
 app = FastAPI(title="Honest Agent Runtime Gateway", version="0.1.0")
+
+
+@app.middleware("http")
+async def enforce_request_size(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > _runtime_config.max_payload_bytes:
+                return JSONResponse(status_code=413, content={"detail": "request payload exceeds configured limit"})
+        except ValueError:
+            return JSONResponse(status_code=400, content={"detail": "invalid content-length header"})
+    return await call_next(request)
 _secret_config = load_secret_config()
 _runtime_config = Config(
     environment=_secret_config.environment,
