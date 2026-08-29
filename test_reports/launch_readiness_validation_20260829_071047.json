@@ -1,0 +1,46 @@
+{
+  "validated_at_utc": "2026-08-29T07:10:47Z",
+  "repository": "akure/HonestAgent",
+  "branch": "main",
+  "latest_pre_release_commit": "4626d44c34eff9dd4f738be2d9bdacf26f00672f",
+  "validation_commands": [
+    "pytest -q",
+    "python tests/requirements_eval.py",
+    "python tests/deep_eval.py",
+    "git diff --check",
+    "git grep secret-pattern scan"
+  ],
+  "measured_results": {
+    "regression_tests": 67,
+    "regression_status": "PASS",
+    "unsafe_catch_rate": 1.0,
+    "safe_pass_rate": 1.0,
+    "deep_eval_latency_p50_ms": 22.823389997938648,
+    "deep_eval_latency_p95_ms": 32.01026200258639,
+    "deep_eval_fast_cases": 22,
+    "deep_eval_escalated_cases": 18,
+    "requirements_pass": 9,
+    "requirements_partial": 4,
+    "requirements_gap": 1,
+    "proxy_health": true,
+    "secret_pattern_scan_findings": 0,
+    "git_diff_check": "PASS"
+  },
+  "launch_gate_evidence": {
+    "LR-1": "PASS in application tests; deployment IdP integration not measured",
+    "LR-2": "PASS for single-host file-backed transactional boundary",
+    "LR-3": "PASS for application executor gateway; third-party executor integration not measured",
+    "LR-4": "PASS for environment-backed managed configuration and rotation contract",
+    "LR-5": "PASS for deterministic offline fault harness; live provider SLO not measured",
+    "LR-6": "PASS for file-backed policy lifecycle; enterprise approval quorum not measured",
+    "LR-7": "PASS for application controls; DNS/network/container/TLS platform evidence not measured"
+  },
+  "conservative_decision": "NO-GO_FOR_UNRESTRICTED_PRODUCTION",
+  "pilot_decision": "CONTROLLED_STAGING_OR_PAID_DESIGN_PARTNER_PILOT_ONLY",
+  "blocking_evidence": [
+    "Live approved-provider latency and fault evidence is not measured",
+    "Deployment-specific DNS rebinding, egress, TLS, container, host, and dependency review is not attached",
+    "Production database migration from the file-backed pilot store is not completed",
+    "Third-party executor enforcement is not independently verified"
+  ]
+}
