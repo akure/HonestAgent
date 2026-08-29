@@ -6,6 +6,7 @@ import hmac
 import json
 import time
 from dataclasses import dataclass
+from typing import Mapping
 
 
 class AuthError(ValueError):
@@ -22,14 +23,38 @@ class ReviewerPrincipal:
     auth_method: str = "bearer-hmac"
 
 
+class ReviewerRoster:
+    """Least-privilege reviewer roster with explicit active identities."""
+
+    def __init__(self, members: Mapping[str, str] | None = None):
+        self._members = dict(members or {})
+
+    def role_for(self, subject: str) -> str | None:
+        return self._members.get(subject)
+
+    def revoke(self, subject: str) -> None:
+        self._members.pop(subject, None)
+
+    def add(self, subject: str, role: str = "reviewer") -> None:
+        if not subject.strip() or role not in {"reviewer", "admin"}:
+            raise ValueError("invalid reviewer roster entry")
+        self._members[subject] = role
+
+
 class ReviewerAuthenticator:
-    def __init__(self, secret: str, required: bool = False, ttl_seconds: int = 900, previous_secrets: list[str] | tuple[str, ...] = ()):
+    def __init__(self, secret: str, required: bool = False, ttl_seconds: int = 900, previous_secrets: list[str] | tuple[str, ...] = (), roster: ReviewerRoster | None = None):
         if required and (not secret or "development" in secret):
             raise ValueError("production reviewer authentication requires a managed secret")
         self.secret = secret.encode("utf-8")
         self.validation_secrets = (self.secret, *(item.encode("utf-8") for item in previous_secrets if item))
         self.required = required
         self.ttl_seconds = ttl_seconds
+        self.roster = roster
+        self._revoked_tokens: set[str] = set()
+
+    def revoke_token(self, token: str) -> None:
+        """Revoke a specific bearer token without exposing token material in state."""
+        self._revoked_tokens.add(hashlib.sha256(token.encode("utf-8")).hexdigest())
 
     def issue_for_test(self, subject: str, role: str = "reviewer", expires_at: int | None = None) -> str:
         if not subject.strip() or role not in {"reviewer", "admin"}:
@@ -47,6 +72,9 @@ class ReviewerAuthenticator:
         if not authorization.startswith("Bearer "):
             raise AuthError("invalid authorization scheme", 401)
         token = authorization[7:].strip()
+        token_fingerprint = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        if token_fingerprint in self._revoked_tokens:
+            raise AuthError("reviewer token revoked", 401)
         try:
             encoded, signature = token.split(".", 1)
             if not any(hmac.compare_digest(signature, hmac.new(key, encoded.encode(), hashlib.sha256).hexdigest()) for key in self.validation_secrets):
@@ -59,6 +87,8 @@ class ReviewerAuthenticator:
             raise AuthError("malformed reviewer token", 401) from exc
         if principal.expires_at < int(time.time()):
             raise AuthError("reviewer token expired", 401)
+        if self.roster is not None and self.roster.role_for(principal.subject) != principal.role:
+            raise AuthError("reviewer identity is not active", 403)
         if principal.role not in {required_role, "admin"}:
             raise AuthError("reviewer role required", 403)
         return principal

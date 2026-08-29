@@ -3,11 +3,12 @@ from __future__ import annotations
 from fastapi import APIRouter, Header, HTTPException
 
 from honest_agent.core.auth import AuthError, ReviewerAuthenticator
+from honest_agent.core.audit import AppendOnlyAuditSink
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.schemas.models import ApprovalRequest
 
 
-def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None = None) -> APIRouter:
+def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None = None, audit_sink: AppendOnlyAuditSink | None = None) -> APIRouter:
     router = APIRouter()
     auth = authenticator or ReviewerAuthenticator(
         secret=guard.config.reviewer_auth_secret,
@@ -15,6 +16,7 @@ def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None
         ttl_seconds=guard.config.reviewer_token_ttl_seconds,
         previous_secrets=guard.config.reviewer_previous_secrets,
     )
+    audit = audit_sink or AppendOnlyAuditSink(f"{guard.config.trajectory_dir}/audit.jsonl")
 
     def reviewer_from_header(authorization: str | None) -> str | None:
         try:
@@ -34,6 +36,7 @@ def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None
             decision = await guard.approve(trajectory_id, reviewer)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="unknown trajectory") from exc
+        audit.append("approve", subject=reviewer, trajectory_id=trajectory_id, policy_version=decision.policy_version)
         return {"decision": decision.model_dump(), "reviewer": reviewer}
 
     @router.post("/reject/{trajectory_id}")
@@ -47,6 +50,7 @@ def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None
             decision = await guard.reject(trajectory_id, reviewer)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="unknown trajectory") from exc
+        audit.append("reject", subject=reviewer, trajectory_id=trajectory_id, policy_version=decision.policy_version)
         return {"decision": decision.model_dump(), "reviewer": reviewer}
 
     return router

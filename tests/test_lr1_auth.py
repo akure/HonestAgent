@@ -8,7 +8,10 @@ import time
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from honest_agent.core.auth import ReviewerAuthenticator
+import pytest
+
+from honest_agent.core.audit import AppendOnlyAuditSink, AuditIntegrityError
+from honest_agent.core.auth import ReviewerAuthenticator, ReviewerRoster
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.interfaces.webhooks import build_router
 from honest_agent.schemas.models import Config, EvaluationRequest
@@ -63,3 +66,30 @@ def test_authenticated_identity_overrides_body_spoof_and_is_persisted(tmp_path):
     assert response.json()["reviewer"] == "alice"
     payload = __import__("json").loads(open(pending.trajectory_path).read())
     assert payload["trajectory"][0]["human_checkpoint"]["reviewer"] == "alice"
+
+
+def test_revoked_token_and_roster_identity_are_rejected():
+    roster = ReviewerRoster({"alice": "reviewer"})
+    auth = ReviewerAuthenticator("secret", required=True, roster=roster)
+    token = auth.issue_for_test("alice")
+    assert auth.authenticate(f"Bearer {token}").subject == "alice"
+    auth.revoke_token(token)
+    with pytest.raises(Exception, match="revoked"):
+        auth.authenticate(f"Bearer {token}")
+    token = auth.issue_for_test("alice", expires_at=int(time.time()) + 901)
+    roster.revoke("alice")
+    with pytest.raises(Exception, match="not active"):
+        auth.authenticate(f"Bearer {token}")
+
+
+def test_append_only_audit_sink_verifies_chain_and_redacts(tmp_path):
+    sink = AppendOnlyAuditSink(str(tmp_path / "events.jsonl"))
+    sink.append("approve", subject="alice", trajectory_id="t-1", policy_version="p-1", details={"api_key": "secret"})
+    sink.append("reject", subject="alice", trajectory_id="t-2", policy_version="p-1")
+    assert sink.verify()
+    assert "secret" not in (tmp_path / "events.jsonl").read_text()
+    lines = (tmp_path / "events.jsonl").read_text().splitlines()
+    lines[0] = lines[0].replace("approve", "tampered")
+    (tmp_path / "events.jsonl").write_text("\n".join(lines) + "\n")
+    with pytest.raises(AuditIntegrityError):
+        sink.verify()
