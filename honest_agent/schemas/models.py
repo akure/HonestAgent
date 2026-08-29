@@ -147,6 +147,8 @@ class Config(BaseModel):
     max_checks: Optional[int] = Field(default=None, gt=0)
     trajectory_dir: str = "trajectories"
     checkpoint_path: str = "trajectories/checkpoints.json"
+    checkpoint_backend: str = "file"
+    checkpoint_database_path: str = "trajectories/checkpoints.sqlite3"
     handoff_secret: str = "honest-agent-development-secret"
     handoff_previous_secrets: list[str] = Field(default_factory=list)
     handoff_ttl_seconds: int = Field(default=300, gt=0)

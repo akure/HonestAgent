@@ -11,6 +11,7 @@ from honest_agent.core.evaluator import ContextEvaluator
 from honest_agent.core.handoff import HandoffError, HandoffSigner
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.core.policy import ActionPolicy
+from honest_agent.core.sqlite_checkpoints import SQLiteCheckpointStore
 from honest_agent.core.policy_registry import PolicyRegistry
 from honest_agent.core.verifier import VerifierEngine
 from honest_agent.schemas.models import (
@@ -32,7 +33,7 @@ class HonestGuard:
         self.evaluator = ContextEvaluator()
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
-        self.store = store or FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds)
+        self.store = store or (SQLiteCheckpointStore(self.config.checkpoint_database_path, self.config.checkpoint_retention_seconds) if self.config.checkpoint_backend == "sqlite" else FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds))
         self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds, self.config.handoff_previous_secrets)
         self.policy_registry = policy_registry
         self.policy = policy or (policy_registry.get_policy() if policy_registry else ActionPolicy())
