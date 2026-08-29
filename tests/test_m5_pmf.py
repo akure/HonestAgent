@@ -26,3 +26,19 @@ def test_pmf_event_log_round_trips(tmp_path: Path):
     assert len(events) == 1
     assert events[0].event_name == "protected_action"
     assert events[0].value["status"] == "PAUSED"
+
+
+def test_pmf_event_log_redacts_sensitive_values_before_persisting(tmp_path: Path):
+    path = tmp_path / "events.jsonl"
+    log = PMFEventLog(str(path))
+    log.append(PMFEvent(
+        event_name="protected_action",
+        customer_id="c1",
+        workflow_id="w1",
+        value={"authorization": "Bearer secret", "nested": [{"api_key": "key"}]},
+    ))
+
+    raw = path.read_text(encoding="utf-8")
+    assert "Bearer secret" not in raw
+    assert '"authorization":"[REDACTED]"' in raw
+    assert '"api_key":"[REDACTED]"' in raw

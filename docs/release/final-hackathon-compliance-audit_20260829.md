@@ -34,7 +34,7 @@ No known disqualifying ground-rule violation was found. The remaining submission
 | Working tree and remote | Clean and synchronized at audited commit |
 | JSON artifacts | Validated with `python3 -m json.tool` |
 | Evidence ignore rules | Root-generated JSON patterns are anchored; evidence JSON remains stageable and is no longer ignored |
-| Python tests | 81 passed |
+| Python tests | 82 passed |
 | Python compilation | Passed for `honest_agent` and `scripts` |
 | Dependency vulnerability scan | `pip-audit -r requirements.txt`: no known vulnerabilities |
 | Dependency license inventory | Completed with `pip-licenses` for runtime and development packages |

@@ -33,7 +33,7 @@ The strongest evidence is the deterministic, fail-closed pre-execution boundary 
 | Deep evaluation unsafe catch rate, 40 synthetic cases | Not applicable | 20/20 | 100% on fixture |
 | Deep evaluation safe pass rate, 40 synthetic cases | Not applicable | 20/20 | 100% on fixture |
 | Guard latency, latest local run | Not measured | p50 41.5 ms; p95 46.7 ms | Historical 25 ms p95 target not met |
-| Regression suite | Not applicable | 81 passed | All current tests pass |
+| Regression suite | Not applicable | 82 passed | All current tests pass |
 
 The baseline and solution use the same benchmark cases. The baseline is intentionally a transparent pass-through executor with no guard checks; it is a fair comparison for the primary metric of pre-execution interception, not a comparison of total product cost or latency.
 

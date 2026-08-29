@@ -9,6 +9,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from honest_agent.core.policy import ActionPolicy
+from honest_agent.ops.control_report import sanitize
 from honest_agent.schemas.models import ActionClass, DecisionStatus, EvaluationRequest
 
 
@@ -71,8 +72,9 @@ class PMFEventLog:
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
     def append(self, event: PMFEvent) -> None:
+        safe_event = event.model_copy(update={"value": sanitize(event.value)})
         with self.path.open("a", encoding="utf-8") as handle:
-            handle.write(event.model_dump_json() + "\n")
+            handle.write(safe_event.model_dump_json() + "\n")
 
     def read(self) -> list[PMFEvent]:
         if not self.path.exists():
