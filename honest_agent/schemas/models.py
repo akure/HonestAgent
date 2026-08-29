@@ -149,3 +149,6 @@ class Config(BaseModel):
     checkpoint_path: str = "trajectories/checkpoints.json"
     handoff_secret: str = "honest-agent-development-secret"
     handoff_ttl_seconds: int = Field(default=300, gt=0)
+    reviewer_auth_secret: str = "honest-agent-reviewer-development-secret"
+    require_reviewer_auth: bool = False
+    reviewer_token_ttl_seconds: int = Field(default=900, gt=0)
