@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import fcntl
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -23,8 +25,13 @@ _VERSION_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 class PolicyRegistry:
     """Durable customer policy lifecycle: draft, approve, activate, and rollback."""
 
-    def __init__(self, path: str = "policies/registry.json"):
+    def __init__(self, path: str = "policies/registry.json", *, approval_quorum: int = 1, signing_secret: str = "", require_simulation: bool = False):
+        if approval_quorum < 1:
+            raise ValueError("approval quorum must be positive")
         self.path = Path(path)
+        self.approval_quorum = approval_quorum
+        self.signing_secret = signing_secret.encode("utf-8")
+        self.require_simulation = require_simulation
         self.lock_path = self.path.with_suffix(self.path.suffix + ".lock")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._state = self._load()
@@ -66,6 +73,15 @@ class PolicyRegistry:
             normalized[tool_name] = model.model_dump(mode="json")
         return normalized
 
+    def _signature(self, version: str, rules: dict[str, dict]) -> str:
+        content = json.dumps({"version": version, "rules": rules}, sort_keys=True, separators=(",", ":"))
+        key = self.signing_secret or b"unsigned-development-policy"
+        return hmac.new(key, content.encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def _verify_record(self, record: dict) -> None:
+        if not hmac.compare_digest(record.get("signature", ""), self._signature(record["version"], record["rules"])):
+            raise PolicyRegistryError("policy signature is invalid")
+
     def import_policy(self, version: str, rules: Mapping[str, PolicyRule | Mapping], imported_by: str) -> dict:
         self._validate_version(version)
         if not imported_by.strip():
@@ -76,7 +92,7 @@ class PolicyRegistry:
             state = self._load()
             if version in state["versions"]:
                 raise PolicyRegistryError("policy version already exists")
-            record = {"version": version, "rules": normalized, "imported_by": imported_by, "imported_at": time.time(), "approved_by": [], "active": False}
+            record = {"version": version, "rules": normalized, "signature": self._signature(version, normalized), "imported_by": imported_by, "imported_at": time.time(), "approved_by": [], "active": False}
             state["versions"][version] = record
             self._write(state)
             self._state = state
@@ -108,8 +124,11 @@ class PolicyRegistry:
             record = state["versions"].get(version)
             if record is None:
                 raise PolicyRegistryError("unknown policy version")
-            if not record["approved_by"]:
-                raise PolicyRegistryError("policy must be approved before activation")
+            self._verify_record(record)
+            if len(record["approved_by"]) < self.approval_quorum:
+                raise PolicyRegistryError(f"policy requires {self.approval_quorum} approval(s) before activation")
+            if self.require_simulation and not record.get("simulation"):
+                raise PolicyRegistryError("policy must have a recorded simulation before activation")
             previous = state.get("active_version")
             for item in state["versions"].values():
                 item["active"] = False
@@ -141,7 +160,18 @@ class PolicyRegistry:
         record = self._state["versions"].get(selected)
         if record is None:
             raise PolicyRegistryError("unknown policy version")
+        self._verify_record(record)
         return ActionPolicy({name: PolicyRule.model_validate(rule) for name, rule in record["rules"].items()}, version=selected)
 
     def simulate(self, requests: Iterable[EvaluationRequest], version: str | None = None) -> PolicySimulation:
-        return simulate_policy(requests, self.get_policy(version))
+        selected = version or self.active_version
+        simulation = simulate_policy(requests, self.get_policy(selected))
+        with self._transaction() as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            state = self._load()
+            record = state["versions"].get(selected)
+            if record is not None:
+                record["simulation"] = {"recorded_at": time.time(), "row_count": len(simulation.rows)}
+                self._write(state)
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        return simulation
