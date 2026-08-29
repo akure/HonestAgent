@@ -4,7 +4,7 @@ from typing import Any, Mapping
 
 import httpx
 
-from honest_agent.core.security import SSRFBlocked, validate_outbound_url
+from honest_agent.core.security import SSRFBlocked, validate_transport_url
 
 
 class UpstreamError(RuntimeError):
@@ -12,8 +12,13 @@ class UpstreamError(RuntimeError):
 
 
 class UpstreamClient:
-    def __init__(self, base_url: str | None = None, client: httpx.AsyncClient | None = None, allow_private_network: bool = False):
-        self.base_url = validate_outbound_url(base_url, allow_private_network) if base_url else None
+    def __init__(self, base_url: str | None = None, client: httpx.AsyncClient | None = None, allow_private_network: bool = False, require_tls: bool = False):
+        self.base_url = validate_transport_url(
+            base_url,
+            require_tls=require_tls,
+            allow_private=allow_private_network,
+            resolve_hostname=client is None,
+        ) if base_url else None
         self.client = client or httpx.AsyncClient(timeout=30.0)
 
     @property

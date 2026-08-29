@@ -15,6 +15,22 @@ def test_ssrf_blocks_local_private_and_credential_urls():
     assert validate_outbound_url("https://api.example.com/v1") == "https://api.example.com/v1"
 
 
+def test_ssrf_blocks_hostname_that_rebinds_to_private_address():
+    def private_resolver(*args, **kwargs):
+        return [(2, 1, 6, "", ("192.168.1.10", 443))]
+
+    with pytest.raises(SSRFBlocked, match="resolves"):
+        validate_outbound_url("https://attacker.example", resolve_hostname=True, resolver=private_resolver)
+
+
+def test_managed_deployment_requires_tls_and_client_can_enforce_it():
+    with pytest.raises(SecurityConfigurationError, match="TLS"):
+        validate_deployment_security("production", False, 1_000_000)
+    validate_deployment_security("production", False, 1_000_000, require_tls=True)
+    with pytest.raises(SecurityConfigurationError, match="TLS"):
+        UpstreamClient("http://api.example.com", require_tls=True)
+
+
 def test_upstream_constructor_applies_ssrf_policy():
     with pytest.raises(SSRFBlocked):
         UpstreamClient("http://169.254.169.254/latest/meta-data")
@@ -42,6 +58,6 @@ def test_trajectory_logger_redacts_sensitive_tool_input(tmp_path):
 def test_deployment_security_rejects_private_upstream_in_managed_environment():
     with pytest.raises(SecurityConfigurationError):
         validate_deployment_security("production", True, 1_000_000)
-    validate_deployment_security("production", False, 1_000_000)
+    validate_deployment_security("production", False, 1_000_000, require_tls=True)
     with pytest.raises(SecurityConfigurationError):
         validate_deployment_security("development", False, 0)
