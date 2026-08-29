@@ -9,13 +9,22 @@ from fastapi import FastAPI, HTTPException
 from honest_agent.core.executor import ExecutionBlocked, ExecutorGateway
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.core.logger import TrajectoryLogger
+from honest_agent.core.secrets import load_secret_config
 from honest_agent.interfaces.upstream import UpstreamClient, UpstreamError
 from honest_agent.interfaces.webhooks import build_router
 from honest_agent.schemas.models import Config, EvaluationRequest
 
 
 app = FastAPI(title="Honest Agent Runtime Gateway", version="0.1.0")
-guard = HonestGuard()
+_secret_config = load_secret_config()
+_runtime_config = Config(
+    handoff_secret=_secret_config.handoff_secret,
+    handoff_previous_secrets=list(_secret_config.handoff_previous_secrets),
+    reviewer_auth_secret=_secret_config.reviewer_auth_secret,
+    reviewer_previous_secrets=list(_secret_config.reviewer_previous_secrets),
+    require_reviewer_auth=_secret_config.managed,
+)
+guard = HonestGuard(config=_runtime_config)
 logger = TrajectoryLogger(guard.config.trajectory_dir)
 upstream = UpstreamClient(os.getenv("HONEST_AGENT_UPSTREAM_URL"))
 app.include_router(build_router(guard))

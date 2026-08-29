@@ -24,10 +24,11 @@ def payload_hash(request: EvaluationRequest) -> str:
 
 
 class HandoffSigner:
-    def __init__(self, secret: str = "honest-agent-development-secret", ttl_seconds: int = 300):
+    def __init__(self, secret: str = "honest-agent-development-secret", ttl_seconds: int = 300, previous_secrets: list[str] | tuple[str, ...] = ()):
         if not secret:
             raise ValueError("handoff secret must not be empty")
         self.secret = secret.encode("utf-8")
+        self.validation_secrets = (self.secret, *(item.encode("utf-8") for item in previous_secrets if item))
         self.ttl_seconds = ttl_seconds
 
     def issue(self, request: EvaluationRequest, decision: GuardDecision) -> ExecutionHandoff:
@@ -50,8 +51,7 @@ class HandoffSigner:
     def validate(self, token: str, request: EvaluationRequest, decision: GuardDecision) -> ExecutionHandoff:
         try:
             encoded, signature = token.split(".", 1)
-            expected = hmac.new(self.secret, encoded.encode(), hashlib.sha256).hexdigest()
-            if not hmac.compare_digest(signature, expected):
+            if not any(hmac.compare_digest(signature, hmac.new(key, encoded.encode(), hashlib.sha256).hexdigest()) for key in self.validation_secrets):
                 raise HandoffError("invalid handoff signature")
             claims = json.loads(base64.urlsafe_b64decode(encoded + "===").decode("utf-8"))
             handoff = ExecutionHandoff(**claims, token=token)

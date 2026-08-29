@@ -23,10 +23,11 @@ class ReviewerPrincipal:
 
 
 class ReviewerAuthenticator:
-    def __init__(self, secret: str, required: bool = False, ttl_seconds: int = 900):
+    def __init__(self, secret: str, required: bool = False, ttl_seconds: int = 900, previous_secrets: list[str] | tuple[str, ...] = ()):
         if required and (not secret or "development" in secret):
             raise ValueError("production reviewer authentication requires a managed secret")
         self.secret = secret.encode("utf-8")
+        self.validation_secrets = (self.secret, *(item.encode("utf-8") for item in previous_secrets if item))
         self.required = required
         self.ttl_seconds = ttl_seconds
 
@@ -48,8 +49,7 @@ class ReviewerAuthenticator:
         token = authorization[7:].strip()
         try:
             encoded, signature = token.split(".", 1)
-            expected = hmac.new(self.secret, encoded.encode(), hashlib.sha256).hexdigest()
-            if not hmac.compare_digest(signature, expected):
+            if not any(hmac.compare_digest(signature, hmac.new(key, encoded.encode(), hashlib.sha256).hexdigest()) for key in self.validation_secrets):
                 raise AuthError("invalid reviewer token", 401)
             claims = json.loads(base64.urlsafe_b64decode(encoded + "===").decode("utf-8"))
             principal = ReviewerPrincipal(subject=claims["sub"], role=claims["role"], expires_at=int(claims["exp"]))

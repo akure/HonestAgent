@@ -32,7 +32,7 @@ class HonestGuard:
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
         self.store = store or FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds)
-        self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds)
+        self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds, self.config.handoff_previous_secrets)
         self.policy = policy or ActionPolicy()
         self.check_count = 0
         self.pending: Dict[str, GuardDecision] = {}

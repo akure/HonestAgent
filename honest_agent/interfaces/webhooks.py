@@ -13,6 +13,7 @@ def build_router(guard: HonestGuard, authenticator: ReviewerAuthenticator | None
         secret=guard.config.reviewer_auth_secret,
         required=guard.config.require_reviewer_auth,
         ttl_seconds=guard.config.reviewer_token_ttl_seconds,
+        previous_secrets=guard.config.reviewer_previous_secrets,
     )
 
     def reviewer_from_header(authorization: str | None) -> str | None:
