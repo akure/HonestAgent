@@ -4,14 +4,16 @@ from typing import Any, Mapping
 
 import httpx
 
+from honest_agent.core.security import SSRFBlocked, validate_outbound_url
+
 
 class UpstreamError(RuntimeError):
     pass
 
 
 class UpstreamClient:
-    def __init__(self, base_url: str | None = None, client: httpx.AsyncClient | None = None):
-        self.base_url = base_url.rstrip("/") if base_url else None
+    def __init__(self, base_url: str | None = None, client: httpx.AsyncClient | None = None, allow_private_network: bool = False):
+        self.base_url = validate_outbound_url(base_url, allow_private_network) if base_url else None
         self.client = client or httpx.AsyncClient(timeout=30.0)
 
     @property
@@ -25,5 +27,7 @@ class UpstreamClient:
             response = await self.client.post(f"{self.base_url}/chat/completions", json=dict(payload))
             response.raise_for_status()
             return response.json()
+        except SSRFBlocked:
+            raise
         except (httpx.HTTPError, ValueError) as exc:
             raise UpstreamError(f"upstream request failed: {type(exc).__name__}") from exc

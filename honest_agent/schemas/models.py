@@ -155,3 +155,6 @@ class Config(BaseModel):
     require_reviewer_auth: bool = False
     reviewer_token_ttl_seconds: int = Field(default=900, gt=0)
     checkpoint_retention_seconds: int | None = Field(default=None, gt=0)
+    environment: str = "development"
+    allow_private_upstream: bool = False
+    max_payload_bytes: int = Field(default=1_000_000, gt=0)

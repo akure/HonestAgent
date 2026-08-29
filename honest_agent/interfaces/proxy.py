@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import time
 from typing import Any, Dict
@@ -10,6 +11,7 @@ from honest_agent.core.executor import ExecutionBlocked, ExecutorGateway
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.core.secrets import load_secret_config
+from honest_agent.core.security import SSRFBlocked, validate_deployment_security
 from honest_agent.interfaces.upstream import UpstreamClient, UpstreamError
 from honest_agent.interfaces.webhooks import build_router
 from honest_agent.schemas.models import Config, EvaluationRequest
@@ -18,15 +20,19 @@ from honest_agent.schemas.models import Config, EvaluationRequest
 app = FastAPI(title="Honest Agent Runtime Gateway", version="0.1.0")
 _secret_config = load_secret_config()
 _runtime_config = Config(
+    environment=_secret_config.environment,
+    allow_private_upstream=os.getenv("HONEST_AGENT_ALLOW_PRIVATE_UPSTREAM", "false").lower() == "true",
+    max_payload_bytes=int(os.getenv("HONEST_AGENT_MAX_PAYLOAD_BYTES", "1000000")),
     handoff_secret=_secret_config.handoff_secret,
     handoff_previous_secrets=list(_secret_config.handoff_previous_secrets),
     reviewer_auth_secret=_secret_config.reviewer_auth_secret,
     reviewer_previous_secrets=list(_secret_config.reviewer_previous_secrets),
     require_reviewer_auth=_secret_config.managed,
 )
+validate_deployment_security(_runtime_config.environment, _runtime_config.allow_private_upstream, _runtime_config.max_payload_bytes)
 guard = HonestGuard(config=_runtime_config)
 logger = TrajectoryLogger(guard.config.trajectory_dir)
-upstream = UpstreamClient(os.getenv("HONEST_AGENT_UPSTREAM_URL"))
+upstream = UpstreamClient(os.getenv("HONEST_AGENT_UPSTREAM_URL"), allow_private_network=_runtime_config.allow_private_upstream)
 app.include_router(build_router(guard))
 
 
@@ -65,6 +71,8 @@ async def evaluate(request: EvaluationRequest):
 @app.post("/v1/execute")
 async def execute(payload: Dict[str, Any]):
     """Execute only when a previously issued handoff validates at this boundary."""
+    if len(json.dumps(payload, separators=(",", ":"))) > guard.config.max_payload_bytes:
+        raise HTTPException(status_code=413, detail="request payload exceeds configured limit")
     try:
         request = EvaluationRequest.model_validate(payload.get("request", {}))
         trajectory_id = str(payload["trajectory_id"])
@@ -80,6 +88,8 @@ async def execute(payload: Dict[str, Any]):
 
 @app.post("/v1/chat/completions")
 async def chat_completions(payload: Dict[str, Any]):
+    if len(json.dumps(payload, separators=(",", ":"))) > guard.config.max_payload_bytes:
+        raise HTTPException(status_code=413, detail="request payload exceeds configured limit")
     request = _request_from_chat(payload)
     started = time.perf_counter()
     decision = await guard.evaluate(request)

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from honest_agent.core.security import redact
 from honest_agent.schemas.models import EvaluationRequest, GuardDecision, Trajectory, TrajectoryMetrics, TrajectoryStep
 
 
@@ -24,7 +25,7 @@ class TrajectoryLogger:
                 verifier_tier=decision.verifier_tier,
                 action_class=decision.action_class,
                 policy_version=decision.policy_version,
-                tool_call={"tool_name": request.tool_name, "input": request.tool_input},
+                tool_call=redact({"tool_name": request.tool_name, "input": request.tool_input}),
                 human_checkpoint=decision.human_checkpoint,
                 action_taken=decision.action_taken,
             )],
