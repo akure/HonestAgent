@@ -1,0 +1,8 @@
+{
+  "source_commit": "d1fad93fbd8a5ca1559be710068a850bf6e375c0",
+  "requirements_sha256": "d0d5658febdde863134ec8f82e3467a4a08094f1d3715b697052f45ee6781489",
+  "python": "Python 3.12.3",
+  "build_command": "python -m build --wheel",
+  "container_image_digest": null,
+  "container_digest_status": "NOT MEASURED \u2014 docker unavailable in audit environment"
+}
