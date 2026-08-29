@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3,<9", "httpx>=0.28,<1"]
+dev = ["pytest>=8.3,<10", "httpx>=0.28,<1"]
 providers = ["groq>=0.13,<1", "google-genai>=1,<2"]
 
 [project.scripts]
