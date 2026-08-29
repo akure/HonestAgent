@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from typing import Dict, Optional
 
+from honest_agent.core.checkpoints import CheckpointStore, FileCheckpointStore
 from honest_agent.core.evaluator import ContextEvaluator
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.core.policy import ActionPolicy
@@ -24,11 +25,12 @@ from honest_agent.schemas.models import (
 
 
 class HonestGuard:
-    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None):
+    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None, store: CheckpointStore | None = None):
         self.config = config or Config()
         self.evaluator = ContextEvaluator()
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
+        self.store = store or FileCheckpointStore(self.config.checkpoint_path)
         self.policy = policy or ActionPolicy()
         self.check_count = 0
         self.pending: Dict[str, GuardDecision] = {}
@@ -78,6 +80,7 @@ class HonestGuard:
             )
             self.resolved[decision.trajectory_id] = decision
             decision.trajectory_path = str(self.logger.write(request, decision))
+            self.store.put_resolved(request, decision)
             return decision
         needs_checkpoint = (
             result.confidence_score < self.config.confidence_threshold
@@ -113,6 +116,9 @@ class HonestGuard:
         if status == DecisionStatus.PAUSED:
             self.pending[decision.trajectory_id] = decision
             self.pending_requests[decision.trajectory_id] = request
+            self.store.put_pending(request, decision)
+        else:
+            self.store.put_resolved(request, decision)
         decision.reasoning = f"{decision.reasoning}; latency_ms={(time.perf_counter() - started) * 1000:.3f}"
         decision.trajectory_path = str(self.logger.write(request, decision))
         return decision
@@ -127,13 +133,22 @@ class HonestGuard:
         async with self._lock:
             if trajectory_id in self.resolved:
                 return self.resolved[trajectory_id]
-            if trajectory_id not in self.pending:
-                raise KeyError(trajectory_id)
-            decision = self.pending.pop(trajectory_id)
-            request = self.pending_requests.pop(trajectory_id)
+            stored_resolved = self.store.get_resolved(trajectory_id)
+            if stored_resolved is not None:
+                self.resolved[trajectory_id] = stored_resolved
+                return stored_resolved
+            if trajectory_id in self.pending:
+                decision = self.pending.pop(trajectory_id)
+                request = self.pending_requests.pop(trajectory_id)
+            else:
+                stored_pending = self.store.get_pending(trajectory_id)
+                if stored_pending is None:
+                    raise KeyError(trajectory_id)
+                request, decision = stored_pending
             decision.status = status
             decision.action_taken = action
             decision.human_checkpoint = HumanCheckpoint(status=checkpoint_status, reviewer=reviewer)
             self.resolved[trajectory_id] = decision
             decision.trajectory_path = str(self.logger.write(request, decision))
+            self.store.put_resolved(request, decision)
             return decision

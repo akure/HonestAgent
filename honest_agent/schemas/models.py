@@ -133,3 +133,4 @@ class Config(BaseModel):
     escalation_ratio: float = Field(default=0.80, ge=0.0, le=1.0)
     max_checks: Optional[int] = Field(default=None, gt=0)
     trajectory_dir: str = "trajectories"
+    checkpoint_path: str = "trajectories/checkpoints.json"

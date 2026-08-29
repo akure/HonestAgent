@@ -3,16 +3,18 @@ from __future__ import annotations
 import time
 from typing import Any, Dict
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.core.logger import TrajectoryLogger
-from honest_agent.schemas.models import ApprovalRequest, Config, EvaluationRequest
+from honest_agent.interfaces.webhooks import build_router
+from honest_agent.schemas.models import Config, EvaluationRequest
 
 
 app = FastAPI(title="Honest Agent Runtime Gateway", version="0.1.0")
 guard = HonestGuard()
 logger = TrajectoryLogger(guard.config.trajectory_dir)
+app.include_router(build_router(guard))
 
 
 def _request_from_chat(payload: Dict[str, Any]) -> EvaluationRequest:
@@ -67,20 +69,3 @@ async def chat_completions(payload: Dict[str, Any]):
         "honest_agent": {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)},
     }
 
-
-@app.post("/approve/{trajectory_id}")
-async def approve(trajectory_id: str, request: ApprovalRequest):
-    try:
-        decision = await guard.approve(trajectory_id, request.reviewer)
-    except KeyError as exc:
-        raise HTTPException(status_code=404, detail="unknown trajectory") from exc
-    return {"decision": decision.model_dump()}
-
-
-@app.post("/reject/{trajectory_id}")
-async def reject(trajectory_id: str, request: ApprovalRequest):
-    try:
-        decision = await guard.reject(trajectory_id, request.reviewer)
-    except KeyError as exc:
-        raise HTTPException(status_code=404, detail="unknown trajectory") from exc
-    return {"decision": decision.model_dump()}
