@@ -4,8 +4,9 @@ import os
 import time
 from typing import Any, Dict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
+from honest_agent.core.executor import ExecutionBlocked, ExecutorGateway
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.interfaces.upstream import UpstreamClient, UpstreamError
@@ -52,6 +53,22 @@ async def evaluate(request: EvaluationRequest):
     return {"decision": decision.model_dump(), "trajectory_path": str(path)}
 
 
+@app.post("/v1/execute")
+async def execute(payload: Dict[str, Any]):
+    """Execute only when a previously issued handoff validates at this boundary."""
+    try:
+        request = EvaluationRequest.model_validate(payload.get("request", {}))
+        trajectory_id = str(payload["trajectory_id"])
+        handoff_token = payload.get("handoff_token")
+        upstream_payload = payload.get("upstream_payload", {})
+        result = await ExecutorGateway(guard, upstream).execute(request, handoff_token, trajectory_id, upstream_payload)
+    except (KeyError, ValueError, ExecutionBlocked) as exc:
+        raise HTTPException(status_code=403, detail="execution blocked: invalid or missing handoff") from exc
+    except UpstreamError as exc:
+        raise HTTPException(status_code=502, detail="upstream execution failed") from exc
+    return {"result": result, "trajectory_id": trajectory_id}
+
+
 @app.post("/v1/chat/completions")
 async def chat_completions(payload: Dict[str, Any]):
     request = _request_from_chat(payload)
@@ -65,19 +82,21 @@ async def chat_completions(payload: Dict[str, Any]):
             "choices": [],
             "honest_agent": {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)},
         }
-    if upstream.enabled:
-        forwarded = dict(payload)
-        forwarded.pop("honest_agent", None)
-        try:
-            response = await upstream.chat_completions(forwarded)
-        except UpstreamError as exc:
-            return {"id": decision.trajectory_id, "object": "honest_agent.upstream_error", "choices": [], "error": str(exc), "honest_agent": {"status": "UPSTREAM_ERROR", "decision": decision.model_dump(), "trajectory_path": str(path)}}
-        response["honest_agent"] = {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)}
-        return response
-    return {
-        "id": decision.trajectory_id,
-        "object": "chat.completion",
-        "choices": [{"index": 0, "message": {"role": "assistant", "content": "Guard approved simulated passthrough."}, "finish_reason": "stop"}],
-        "honest_agent": {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)},
-    }
-
+    metadata = payload.get("honest_agent", {}) or {}
+    handoff_token = metadata.get("handoff_token")
+    trajectory_id = metadata.get("trajectory_id", decision.trajectory_id)
+    forwarded = dict(payload)
+    forwarded.pop("honest_agent", None)
+    try:
+        response = await ExecutorGateway(guard, upstream).execute(request, handoff_token, trajectory_id, forwarded)
+    except ExecutionBlocked:
+        return {
+            "id": decision.trajectory_id,
+            "object": "honest_agent.execution_blocked",
+            "choices": [],
+            "honest_agent": {"status": "EXECUTION_BLOCKED", "decision": decision.model_dump(), "trajectory_path": str(path)},
+        }
+    except UpstreamError as exc:
+        return {"id": decision.trajectory_id, "object": "honest_agent.upstream_error", "choices": [], "error": str(exc), "honest_agent": {"status": "UPSTREAM_ERROR", "decision": decision.model_dump(), "trajectory_path": str(path)}}
+    response["honest_agent"] = {"status": decision.status.value, "decision": decision.model_dump(), "trajectory_path": str(path)}
+    return response
