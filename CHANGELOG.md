@@ -82,6 +82,44 @@ This historical sequence records the implementation progression from the initial
 - Closed B-7 release decision controls with a deterministic fail-closed release gate.
 - Evidence: `docs/release/blocker-closure-plan_20260829_071500.md` and the corresponding B-1 through B-7 traces and change logs.
 
+### Development change-log index
+
+The following index reconciles every file currently present in `docs/development/change_logs/` with the milestone or evidence activity it records. Historical test counts in these dated records are intentionally preserved; they describe the run at that time and are not substitutes for the latest metrics above.
+
+| Change log | Scope | Recorded outcome |
+|---|---|---|
+| `change_log_policy_contract_m0_20260829_054852.md` | M0 policy contract | Structured action/policy contract and fail-closed unknown-action behavior established. |
+| `change_log_durable_checkpoint_audit_m1_20260829_060033.md` | M1 checkpoint and audit | Durable checkpoint/audit foundation and restart-safe resolution established. |
+| `change_log_signed_executor_handoff_m2_20260829_060434.md` | M2 handoff | Payload- and trajectory-bound signed handoff established. |
+| `change_log_upstream_passthrough_provider_m3_20260829_060706.md` | M3 provider boundary | Optional OpenAI-compatible provider and guarded upstream path added; local simulation remains the default. |
+| `change_log_control_readiness_reporting_m4_20260829_060915.md` | M4 reporting | Structured control-readiness reporting added. |
+| `change_log_pmf_simulation_instrumentation_m5_20260829_061112.md` | M5 pilot instrumentation | Policy simulation and sanitized pilot event vocabulary added. |
+| `change_log_launch_readiness_program_20260829_062926.md` | LR program | Ordered launch-readiness gates and acceptance evidence defined. |
+| `change_log_reviewer_auth_20260829_063624.md` | LR-1 identity | Reviewer authentication, roles, expiry, revocation, and attribution controls added. |
+| `change_log_checkpoint_storage_20260829_064548.md` | LR-2 storage | SQLite/file-backed durability, locking, retention, backup, and restore controls exercised. |
+| `change_log_executor_enforcement_20260829_065316.md` | LR-3 executor | Invalid, stale, replayed, or mismatched handoffs blocked before callable invocation. |
+| `change_log_managed_secrets_20260829_065609.md` | LR-4 secrets | Managed startup, rotation overlap, validation, and redaction controls added. |
+| `change_log_provider_testing_20260829_065833.md` | LR-5 providers | Timeout, malformed output, disagreement, retry, cancellation, and latency tests added. |
+| `change_log_customer_policy_20260829_070256.md` | LR-6 policy | Policy import, simulation, approval, activation, signing, and rollback controls added. |
+| `change_log_security_hardening_20260829_070602.md` | LR-7 security | SSRF, redaction, payload-limit, private-network, and security-boundary controls added. |
+| `change_log_final_launch_readiness_20260829_071047.md` | Final LR review | Conservative NO-GO decision recorded for unrestricted production. |
+| `change_log_blocker_closure_program_20260829_071500.md` | B-1–B-7 program | Ordered target-environment evidence closure program defined. |
+| `change_log_blocker_b1_provider_evidence_20260829_071700.md` | B-1 provider | Local fault harness passed; live-provider evidence remained not measured. |
+| `change_log_blocker_b2_transactional_storage_20260829_072115.md` | B-2 storage | Transactional storage controls passed locally; deployment failover evidence remained incomplete. |
+| `change_log_blocker_b3_executor_coverage_20260829_072253.md` | B-3 executor | Supported adapter blocked invalid handoffs with zero callable side effects. |
+| `change_log_blocker_b4_platform_security_20260829_074000.md` | B-4 platform security | DNS-rebinding and TLS application controls added; target-platform evidence remained not measured. |
+| No standalone `change_log_blocker_b5_*.md` file | B-5 identity operations | B-5 implementation is recorded in `change_log_reviewer_auth_20260829_063624.md`, the CP-5 sprint trace/change log, and the B-5 implementation commit history. |
+| `change_log_blocker_b6_enterprise_policy_governance_20260829_075000.md` | B-6 governance | Signed records, quorum, simulation gating, activation, and tamper detection added. |
+| `change_log_blocker_b7_final_release_decision_20260829_080000.md` | B-7 release gate | Deterministic fail-closed release decision gate added. |
+| `change_log_sprint_cp1_immutable_build_supply_chain_20260829_084500.md` | CP-1 supply chain | Isolated build, provenance, SBOM, dependency, and secret-scan evidence recorded. |
+| `change_log_sprint_cp2_provider_reliability_20260829_090000.md` | CP-2 provider | Local evidence runner executed; approved live-provider result remained `NOT MEASURED`. |
+| `change_log_sprint_cp3_storage_recovery_20260829_091500.md` | CP-3 recovery | Restart, concurrency, backup/restore, and retention controls passed locally; production topology remained partial. |
+| `change_log_sprint_cp4_executor_side_effect_safety_20260829_094500.md` | CP-4 executor safety | Twelve targeted side-effect and handoff tests passed; real adapter coverage remained partial. |
+| `change_log_sprint_cp5_identity_audit_operations_20260829_101500.md` | CP-5 identity/audit | Eleven identity and audit tests passed; production IdP and immutable sink remained not measured. |
+| `change_log_sprint_cp6_policy_governance_20260829_103000.md` | CP-6 governance | Six policy lifecycle tests passed; enterprise custody and authority remained not measured. |
+| `change_log_sprint_cp7_platform_security_operations_20260829_110000.md` | CP-7 operations | Eighteen tests, compilation, dependency scan, and secret scan passed locally; host/platform drills remained partial. |
+| `change_log_launch_readiness_audit_20260829_083000.md` | Final audit | Found and fixed missing guard-endpoint payload-size enforcement; 81-test verification passed. |
+
 ## Baseline and evidence policy
 
 The benchmark baseline is a transparent pass-through executor with no independent guard checks. Baseline and solution runs use the same labeled synthetic cases. The primary metric is unsafe-action interception **before execution**; safe pass-through and latency are reported separately. Any future metric change must preserve the case set or explain the difference explicitly.
