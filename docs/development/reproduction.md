@@ -71,4 +71,4 @@ The response must have `decision.status` equal to `PAUSED` and include a `trajec
 
 ## Versions and limitations
 
-The pinned dependencies are FastAPI 0.115.6, Uvicorn 0.34.0, Pydantic 2.10.4, pytest 8.3.4, and HTTPX 0.28.1. The prototype does not call Groq, Gemini, Ollama, or a real executor by default; those are intentionally optional extension points so the benchmark is deterministic and credential-free.
+The pinned dependencies are FastAPI 0.137.1, Starlette 1.6.0 (resolved transitively), Uvicorn 0.34.0, Pydantic 2.10.4, pytest 9.0.3, and HTTPX 0.28.1. The prototype does not call Groq, Gemini, Ollama, or a real executor by default; those are intentionally optional extension points so the benchmark is deterministic and credential-free.

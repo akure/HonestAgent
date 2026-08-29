@@ -39,6 +39,16 @@ def test_pending_checkpoint_survives_guard_restart(tmp_path: Path):
 
 
 def test_webhook_routes_are_registered_separately():
-    paths = {route.path for route in app.routes}
+    def route_paths(routes):
+        paths = set()
+        for route in routes:
+            if hasattr(route, "path"):
+                paths.add(route.path)
+            paths.update(route_paths(getattr(route, "routes", [])))
+            paths.update(route_paths(getattr(getattr(route, "router", None), "routes", [])))
+            paths.update(route_paths(getattr(getattr(route, "original_router", None), "routes", [])))
+        return paths
+
+    paths = route_paths(app.routes)
     assert "/approve/{trajectory_id}" in paths
     assert "/reject/{trajectory_id}" in paths
