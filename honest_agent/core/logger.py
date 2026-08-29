@@ -16,10 +16,10 @@ class TrajectoryLogger:
     def write(self, request: EvaluationRequest, decision: GuardDecision, step: int = 1, latency_ms: float = 0.0) -> Path:
         trajectory = Trajectory(
             agent_id=request.agent_id,
-            system_instruction=request.system_instruction,
+            system_instruction="[OMITTED]" if request.system_instruction else "",
             trajectory=[TrajectoryStep(
                 step=step,
-                thought=request.thought,
+                thought="[OMITTED]" if request.thought else "",
                 context_token_ratio=decision.context_token_ratio,
                 confidence_score=decision.confidence_score,
                 verifier_tier=decision.verifier_tier,

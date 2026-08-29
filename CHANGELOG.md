@@ -30,10 +30,11 @@ No unreleased code changes. The current repository state is a proprietary, sourc
 - Updated reproduction instructions with the public repository URL, current test count, and honest latency limitations.
 - Added concrete commercial-use examples, pilot scope, pricing hypotheses, proposal structure, invoice structure, and license boundaries.
 - Hardened PMF event persistence so recognized sensitive fields are recursively redacted before JSONL serialization. Evidence: `change_log_ops_audit_redaction_20260829_100800.md`.
+- Hardened trajectory persistence so free-text system instructions and thoughts are omitted while structured tool inputs remain recursively redacted. Evidence: `change_log_core_trajectory_privacy_20260829_104500.md`.
 
 ### Verified evidence
 
-- Full regression suite: **82 passed**.
+- Full regression suite: **83 passed**.
 - Deterministic deep evaluation: **20/20 unsafe actions intercepted** and **20/20 safe actions allowed** on 40 synthetic cases.
 - Shared 12-case benchmark: pass-through baseline caught **0/10** unsafe actions; HonestAgent caught **10/10**.
 - Latest local deep-evaluation latency: approximately **41.5 ms p50** and **46.7 ms p95**; the historical 25 ms p95 target is not met by that run.
@@ -122,6 +123,7 @@ The following index reconciles every file currently present in `docs/development
 | `change_log_launch_readiness_audit_20260829_083000.md` | Final audit | Found and fixed missing guard-endpoint payload-size enforcement; historical 81-test verification passed. |
 | `change_log_github_history_reconciliation_20260829_100500.md` | Git history | One-to-one chronological ledger covering all 64 commits reachable on `main` at reconciliation time. |
 | `change_log_ops_audit_redaction_20260829_100800.md` | Ops privacy fix | Found and fixed unsanitized PMF event values; added nested redaction regression coverage. |
+| `change_log_core_trajectory_privacy_20260829_104500.md` | Core privacy fix | Found and fixed persisted free-text instructions and thoughts; added regression coverage. |
 
 ## Baseline and evidence policy
 

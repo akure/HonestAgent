@@ -47,12 +47,16 @@ def test_redaction_is_recursive_and_preserves_non_sensitive_shape():
 
 
 def test_trajectory_logger_redacts_sensitive_tool_input(tmp_path):
-    request = EvaluationRequest(tool_name="lookup", tool_input={"account": "a-1", "authorization": "Bearer secret"})
+    request = EvaluationRequest(tool_name="lookup", tool_input={"account": "a-1", "authorization": "Bearer secret"}, system_instruction="customer secret instruction", thought="customer private thought")
     decision = GuardDecision(status=DecisionStatus.PROCEED, confidence_score=0.9, verifier_tier=VerifierTier.FAST, hallucination_risk=RiskLevel.LOW, action_class=ActionClass.READ_ONLY, reasoning="ok", recommended_action=RecommendedAction.PROCEED, action_taken="PROCEEDED")
     path = TrajectoryLogger(str(tmp_path)).write(request, decision)
     body = json.loads(path.read_text())
     assert body["trajectory"][0]["tool_call"]["input"]["authorization"] == "[REDACTED]"
+    assert body["system_instruction"] == "[OMITTED]"
+    assert body["trajectory"][0]["thought"] == "[OMITTED]"
     assert "Bearer secret" not in path.read_text()
+    assert "customer secret instruction" not in path.read_text()
+    assert "customer private thought" not in path.read_text()
 
 
 def test_deployment_security_rejects_private_upstream_in_managed_environment():

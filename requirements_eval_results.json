@@ -3,7 +3,7 @@
     "last_verified": "2026-08-29",
     "source_commit": "6c9143a00e0ab2e76725d3447f57af5daf421abd",
     "verification_command": "PYTHONPATH=. python3 -m pytest -q; PYTHONPATH=. python3 tests/deep_eval.py",
-    "regression_tests_passed": 82,
+    "regression_tests_passed": 83,
     "evidence_boundary": "offline synthetic fixtures and local deterministic verifier; not production or live-provider evidence"
   },
   "requirements": [

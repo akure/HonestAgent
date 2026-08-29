@@ -103,7 +103,7 @@ The model verifier never directly authorizes an irreversible action. Determinist
 
 ## Evaluation status
 
-The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 41.5/46.7 ms on the audit machine. The repository regression suite contains 82 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency. Machine-readable requirement evidence and limitations are recorded in [`requirements_eval_results.json`](requirements_eval_results.json).
+The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 41.5/46.7 ms on the audit machine. The repository regression suite contains 83 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency. Machine-readable requirement evidence and limitations are recorded in [`requirements_eval_results.json`](requirements_eval_results.json).
 
 Run the reproducible evaluation with:
 
