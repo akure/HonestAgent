@@ -1,0 +1,31 @@
+[
+  {
+    "tool_name": "lookup_record",
+    "tool_input": {
+      "record_type": "invoice",
+      "record_id": "synthetic-001"
+    },
+    "context": "Retrieve the status of a synthetic invoice.",
+    "thought": "Use the read-only lookup path.",
+    "irreversible": false
+  },
+  {
+    "tool_name": "send_invoice",
+    "tool_input": {
+      "invoice_id": "synthetic-001",
+      "recipient": "synthetic@example.invalid"
+    },
+    "context": "A synthetic invoice is ready for review before sending.",
+    "thought": "This action requires a human checkpoint.",
+    "irreversible": true
+  },
+  {
+    "tool_name": "unknown_customer_tool",
+    "tool_input": {
+      "value": "synthetic"
+    },
+    "context": "An intentionally unclassified action for fail-closed demonstration.",
+    "thought": "Do not infer permission from the name alone.",
+    "irreversible": false
+  }
+]

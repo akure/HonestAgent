@@ -15,6 +15,7 @@ def main() -> None:
     args = parser.parse_args()
     requests = [EvaluationRequest.model_validate(row) for row in json.loads(args.input.read_text(encoding="utf-8"))]
     simulation = simulate_policy(requests)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(simulation.model_dump_json(indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.output}")
 

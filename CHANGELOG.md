@@ -31,6 +31,7 @@ No unreleased code changes. The current repository state is a proprietary, sourc
 - Added concrete commercial-use examples, pilot scope, pricing hypotheses, proposal structure, invoice structure, and license boundaries.
 - Hardened PMF event persistence so recognized sensitive fields are recursively redacted before JSONL serialization. Evidence: `change_log_ops_audit_redaction_20260829_100800.md`.
 - Hardened trajectory persistence so free-text system instructions and thoughts are omitted while structured tool inputs remain recursively redacted. Evidence: `change_log_core_trajectory_privacy_20260829_104500.md`.
+- Hardened the report and policy-simulation CLIs to create output directories and added the sanitized fixture referenced by the documented simulation workflow. Evidence: `change_log_scripts_reproducibility_20260829_105000.md`.
 
 ### Verified evidence
 
@@ -124,6 +125,7 @@ The following index reconciles every file currently present in `docs/development
 | `change_log_github_history_reconciliation_20260829_100500.md` | Git history | One-to-one chronological ledger covering all 64 commits reachable on `main` at reconciliation time. |
 | `change_log_ops_audit_redaction_20260829_100800.md` | Ops privacy fix | Found and fixed unsanitized PMF event values; added nested redaction regression coverage. |
 | `change_log_core_trajectory_privacy_20260829_104500.md` | Core privacy fix | Found and fixed persisted free-text instructions and thoughts; added regression coverage. |
+| `change_log_scripts_reproducibility_20260829_105000.md` | Scripts reproducibility | Fixed missing output-directory creation and added the documented sanitized policy fixture. |
 
 ## Baseline and evidence policy
 

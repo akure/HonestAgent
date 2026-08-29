@@ -14,6 +14,7 @@ def main() -> None:
     parser.add_argument("--customer", default="synthetic-pilot")
     args = parser.parse_args()
     report = build_control_readiness_report(json.loads(args.input.read_text(encoding="utf-8")), customer=args.customer)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.output}")
 
