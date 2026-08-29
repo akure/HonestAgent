@@ -119,6 +119,7 @@ The following index reconciles every file currently present in `docs/development
 | `change_log_sprint_cp6_policy_governance_20260829_103000.md` | CP-6 governance | Six policy lifecycle tests passed; enterprise custody and authority remained not measured. |
 | `change_log_sprint_cp7_platform_security_operations_20260829_110000.md` | CP-7 operations | Eighteen tests, compilation, dependency scan, and secret scan passed locally; host/platform drills remained partial. |
 | `change_log_launch_readiness_audit_20260829_083000.md` | Final audit | Found and fixed missing guard-endpoint payload-size enforcement; 81-test verification passed. |
+| `change_log_github_history_reconciliation_20260829_100500.md` | Git history | One-to-one chronological ledger covering all 64 commits reachable on `main` at reconciliation time. |
 
 ## Baseline and evidence policy
 
