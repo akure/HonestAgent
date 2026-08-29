@@ -5,7 +5,7 @@
 | Sprint | `B-6` |
 | Status | `partial — single-host governance boundary complete; enterprise deployment evidence NOT MEASURED` |
 | Timestamp UTC | `2026-08-29 07:50:00` |
-| Commit | `{filled after commit}` |
+| Commit | `61877b7` |
 
 ## Implementation
 

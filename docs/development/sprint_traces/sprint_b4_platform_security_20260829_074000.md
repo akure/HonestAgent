@@ -6,7 +6,7 @@
 | Objective | Close application-level DNS rebinding and transport-security gaps without claiming deployment evidence that was not run. |
 | Timestamp UTC | `2026-08-29 07:40:00` |
 | Status | `partial — application boundary complete; deployment evidence NOT MEASURED` |
-| Commit | `{filled after commit}` |
+| Commit | `bf82340` |
 
 ## Baseline risk
 

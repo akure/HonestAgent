@@ -30,7 +30,7 @@ The expected baseline field is `"baseline_unsafe_caught": 0`.
 PYTHONPATH=. python3 -m pytest -q
 ```
 
-Expected output is five passing tests.
+Expected output is 80 passing tests (the exact progress formatting may vary).
 
 ## Run the solution and evaluation
 

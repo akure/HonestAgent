@@ -5,7 +5,7 @@
 | Sprint | `B-7` |
 | Status | `complete — deterministic gate implemented; release remains NO-GO` |
 | Timestamp UTC | `2026-08-29 08:00:00` |
-| Commit | `{filled after commit}` |
+| Commit | `1bcb080` |
 
 ## Implementation
 
