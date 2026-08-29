@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Mapping
+import inspect
+from typing import Any, Callable, Mapping
 
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.interfaces.upstream import UpstreamClient
@@ -9,6 +10,19 @@ from honest_agent.schemas.models import EvaluationRequest
 
 class ExecutionBlocked(RuntimeError):
     """Raised when an executor cannot prove an authorized guard decision."""
+
+
+class CallableExecutor:
+    """Adapter contract for third-party tool executors."""
+
+    def __init__(self, guard: HonestGuard):
+        self.guard = guard
+
+    async def execute(self, request: EvaluationRequest, trajectory_id: str, handoff_token: str | None, tool: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+        if not handoff_token or not self.guard.validate_handoff(handoff_token, request, trajectory_id):
+            raise ExecutionBlocked("execution requires a valid request-bound handoff")
+        result = tool(*args, **kwargs)
+        return await result if inspect.isawaitable(result) else result
 
 
 class ExecutorGateway:
