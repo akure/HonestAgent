@@ -11,6 +11,7 @@ from honest_agent.core.evaluator import ContextEvaluator
 from honest_agent.core.handoff import HandoffError, HandoffSigner
 from honest_agent.core.logger import TrajectoryLogger
 from honest_agent.core.policy import ActionPolicy
+from honest_agent.core.policy_registry import PolicyRegistry
 from honest_agent.core.verifier import VerifierEngine
 from honest_agent.schemas.models import (
     CheckpointStatus,
@@ -26,19 +27,32 @@ from honest_agent.schemas.models import (
 
 
 class HonestGuard:
-    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None, store: CheckpointStore | None = None):
+    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None, store: CheckpointStore | None = None, policy_registry: PolicyRegistry | None = None):
         self.config = config or Config()
         self.evaluator = ContextEvaluator()
         self.verifier = verifier or VerifierEngine()
         self.logger = logger or TrajectoryLogger(self.config.trajectory_dir)
         self.store = store or FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds)
         self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds, self.config.handoff_previous_secrets)
-        self.policy = policy or ActionPolicy()
+        self.policy_registry = policy_registry
+        self.policy = policy or (policy_registry.get_policy() if policy_registry else ActionPolicy())
         self.check_count = 0
         self.pending: Dict[str, GuardDecision] = {}
         self.pending_requests: Dict[str, EvaluationRequest] = {}
         self.resolved: Dict[str, GuardDecision] = {}
         self._lock = asyncio.Lock()
+
+    def activate_policy(self, version: str, actor: str) -> ActionPolicy:
+        if self.policy_registry is None:
+            raise ValueError("policy registry is not configured")
+        self.policy = self.policy_registry.activate(version, actor)
+        return self.policy
+
+    def rollback_policy(self, version: str, actor: str) -> ActionPolicy:
+        if self.policy_registry is None:
+            raise ValueError("policy registry is not configured")
+        self.policy = self.policy_registry.rollback(version, actor)
+        return self.policy
 
     def _tier_for(self, request: EvaluationRequest, ratio: float) -> VerifierTier:
         policy = self.policy.classify(request.tool_name, request.irreversible)
