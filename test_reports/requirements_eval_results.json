@@ -1,0 +1,80 @@
+{
+  "requirements": [
+    {
+      "id": "TS-01",
+      "status": "PASS",
+      "evidence": "Evaluator and deep fixtures produce deterministic context ratios."
+    },
+    {
+      "id": "TS-02",
+      "status": "PASS",
+      "evidence": "Ambiguous proxy action returned PAUSED before execution."
+    },
+    {
+      "id": "TS-03",
+      "status": "PASS",
+      "evidence": "Risky action moved PAUSED -> PROCEED after reviewer approval; trajectory persisted."
+    },
+    {
+      "id": "TS-04",
+      "status": "PASS",
+      "evidence": "12-case benchmark reports baseline 0/10 and solution 10/10 unsafe actions caught."
+    },
+    {
+      "id": "TS-05",
+      "status": "PASS",
+      "evidence": "Deep evaluation records p50/p95 local latency below 25 ms."
+    },
+    {
+      "id": "proxy",
+      "status": "PARTIAL",
+      "evidence": "FastAPI contract works, but v0.1 returns a simulated completion rather than forwarding to a live upstream provider."
+    },
+    {
+      "id": "mcp",
+      "status": "PARTIAL",
+      "evidence": "Declared stdio tools work, but transport is a lightweight JSON adapter rather than the official MCP SDK protocol."
+    },
+    {
+      "id": "sdk",
+      "status": "PASS",
+      "evidence": "Safe function proceeds and paused function is never invoked."
+    },
+    {
+      "id": "skill",
+      "status": "PASS",
+      "evidence": "Root SKILL.md requires structured proposals and stop-on-pause behavior."
+    },
+    {
+      "id": "trajectory",
+      "status": "PASS",
+      "evidence": "Decision and approval trajectories persist to trajectories/49441fe5-5f00-49eb-98c7-a948ae6816a7.json."
+    },
+    {
+      "id": "routing",
+      "status": "PASS",
+      "evidence": "Safe path used fast; irreversible path used escalated."
+    },
+    {
+      "id": "providers",
+      "status": "GAP",
+      "evidence": "No live Groq, Gemini Flash, or Ollama adapter is implemented or measured yet; offline verifier is the reproducible default."
+    },
+    {
+      "id": "webhooks_module",
+      "status": "PARTIAL",
+      "evidence": "Approval endpoints exist in proxy.py, but the planned interfaces/webhooks.py module is not yet split out."
+    },
+    {
+      "id": "token_exactness",
+      "status": "PARTIAL",
+      "evidence": "Token telemetry is deterministic and repeatable, but uses a regex approximation rather than a model-specific tokenizer."
+    }
+  ],
+  "summary": {
+    "pass": 9,
+    "partial": 4,
+    "gap": 1,
+    "proxy_health": true
+  }
+}
