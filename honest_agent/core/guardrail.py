@@ -42,6 +42,7 @@ class HonestGuard:
 
     async def evaluate(self, request: EvaluationRequest) -> GuardDecision:
         started = time.perf_counter()
+        policy = self.policy.classify(request.tool_name, request.irreversible)
         async with self._lock:
             if self.config.max_checks is not None and self.check_count >= self.config.max_checks:
                 return GuardDecision(
@@ -49,6 +50,8 @@ class HonestGuard:
                     confidence_score=0.0,
                     verifier_tier=VerifierTier.FAST,
                     hallucination_risk="HIGH",
+                    action_class=policy.action_class,
+                    policy_version=policy.policy_version,
                     reasoning="configured check-count cap exceeded",
                     recommended_action=RecommendedAction.REQUIRE_HUMAN_CHECKPOINT,
                     action_taken="REJECTED_BEFORE_EXECUTION",
@@ -65,6 +68,8 @@ class HonestGuard:
                 confidence_score=0.0,
                 verifier_tier=tier,
                 hallucination_risk=RiskLevel.HIGH,
+                action_class=policy.action_class,
+                policy_version=policy.policy_version,
                 reasoning=f"verification unavailable; failing closed: {type(exc).__name__}",
                 recommended_action=RecommendedAction.REQUIRE_HUMAN_CHECKPOINT,
                 context_token_count=telemetry.token_count,
@@ -74,13 +79,12 @@ class HonestGuard:
             self.resolved[decision.trajectory_id] = decision
             decision.trajectory_path = str(self.logger.write(request, decision))
             return decision
-        policy = self.policy.classify(request.tool_name, request.irreversible)
         needs_checkpoint = (
             result.confidence_score < self.config.confidence_threshold
             or result.recommended_action == RecommendedAction.REQUIRE_HUMAN_CHECKPOINT
             or policy.requires_escalation
         )
-        if not request.tool_name:
+        if not request.tool_name.strip():
             status = DecisionStatus.REJECTED
             action = "REJECTED_INVALID_ACTION"
             checkpoint = None
@@ -97,7 +101,9 @@ class HonestGuard:
             confidence_score=result.confidence_score,
             verifier_tier=result.verifier_tier,
             hallucination_risk=result.hallucination_risk,
-            reasoning=result.reasoning,
+            action_class=policy.action_class,
+            policy_version=policy.policy_version,
+            reasoning=f"{result.reasoning}; policy={policy.reason}",
             recommended_action=result.recommended_action,
             human_checkpoint=checkpoint,
             context_token_count=telemetry.token_count,

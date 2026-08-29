@@ -22,6 +22,8 @@ class TrajectoryLogger:
                 context_token_ratio=decision.context_token_ratio,
                 confidence_score=decision.confidence_score,
                 verifier_tier=decision.verifier_tier,
+                action_class=decision.action_class,
+                policy_version=decision.policy_version,
                 tool_call={"tool_name": request.tool_name, "input": request.tool_input},
                 human_checkpoint=decision.human_checkpoint,
                 action_taken=decision.action_taken,

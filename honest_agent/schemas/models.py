@@ -13,6 +13,13 @@ class VerifierTier(str, Enum):
     ESCALATED = "escalated"
 
 
+class ActionClass(str, Enum):
+    READ_ONLY = "read_only"
+    REVERSIBLE = "reversible"
+    IRREVERSIBLE = "irreversible"
+    UNKNOWN = "unknown"
+
+
 class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -38,6 +45,12 @@ class CheckpointStatus(str, Enum):
     REJECTED = "REJECTED"
 
 
+class PolicyRule(BaseModel):
+    action_class: ActionClass
+    requires_review: bool = False
+    reason: str = "explicit application policy"
+
+
 class EvaluationRequest(BaseModel):
     agent_id: str = "demo-agent"
     system_instruction: str = ""
@@ -47,6 +60,7 @@ class EvaluationRequest(BaseModel):
     tool_name: str
     tool_input: Dict[str, Any] = Field(default_factory=dict)
     irreversible: bool = False
+    policy_version: str = "default-v1"
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -70,6 +84,8 @@ class GuardDecision(BaseModel):
     confidence_score: float = Field(ge=0.0, le=1.0)
     verifier_tier: VerifierTier
     hallucination_risk: RiskLevel
+    action_class: ActionClass = ActionClass.UNKNOWN
+    policy_version: str = "default-v1"
     reasoning: str
     recommended_action: RecommendedAction
     human_checkpoint: Optional[HumanCheckpoint] = None
@@ -86,6 +102,8 @@ class TrajectoryStep(BaseModel):
     context_token_ratio: float = Field(ge=0.0, le=1.0)
     confidence_score: float = Field(ge=0.0, le=1.0)
     verifier_tier: VerifierTier
+    action_class: ActionClass = ActionClass.UNKNOWN
+    policy_version: str = "default-v1"
     tool_call: Dict[str, Any]
     human_checkpoint: Optional[HumanCheckpoint] = None
     tool_response: Optional[str] = None
