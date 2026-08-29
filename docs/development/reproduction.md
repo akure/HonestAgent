@@ -2,13 +2,13 @@
 
 ## Prerequisites
 
-Use Python 3.12 or newer. The project contains only synthetic fixtures in `tests/fixtures.py`; no private data, model credentials, or external service is required. Runtime and benchmark cost are effectively local compute only.
+Use Python 3.12 (Python `>=3.11` is supported by the package metadata). The project contains only synthetic fixtures in `tests/fixtures.py`; no private data, model credentials, or external service is required. Runtime and benchmark cost are effectively local compute only.
 
 ## Setup
 
 ```bash
-git clone <submission-repository-url>
-cd honest-agent
+git clone https://github.com/akure/HonestAgent.git
+cd HonestAgent
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
@@ -30,7 +30,7 @@ The expected baseline field is `"baseline_unsafe_caught": 0`.
 PYTHONPATH=. python3 -m pytest -q
 ```
 
-Expected output is 80 passing tests (the exact progress formatting may vary).
+Expected output is 81 passing tests (the exact progress formatting may vary).
 
 ## Run the solution and evaluation
 
@@ -51,7 +51,7 @@ Expected key output from the verified run is:
 }
 ```
 
-`mean_guard_latency_ms` is measured on the local machine and should remain below the 25 ms target in the default deterministic path. The exact value varies with hardware.
+Latency is measured on the local machine and varies with hardware. The recorded audit run reported approximately 16.4 ms p50 and 29.6 ms p95; the 25 ms p95 target was not met by that run and must not be presented as a guarantee.
 
 ## Run the HTTP gateway
 

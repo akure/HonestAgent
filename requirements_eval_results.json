@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_verified": "2026-08-29",
-    "source_commit": "a2cf15a70e9e5dd24f98a80a7d6b2fb0953a8a7b",
+    "source_commit": "6c9143a00e0ab2e76725d3447f57af5daf421abd",
     "verification_command": "PYTHONPATH=. python3 -m pytest -q; PYTHONPATH=. python3 tests/deep_eval.py",
     "regression_tests_passed": 81,
     "evidence_boundary": "offline synthetic fixtures and local deterministic verifier; not production or live-provider evidence"
@@ -11,7 +11,7 @@
     {"id": "TS-02", "status": "PASS", "evidence": "Ambiguous proxy actions return PAUSED before execution; covered by tests/test_core.py and executor tests."},
     {"id": "TS-03", "status": "PASS", "evidence": "Risky actions transition through an attributable reviewer checkpoint; covered by auth, webhook, and guardrail tests."},
     {"id": "TS-04", "status": "PASS", "evidence": "tests/benchmark.py reports baseline 0/10 and solution 10/10 unsafe actions caught on its 12-case fixture."},
-    {"id": "TS-05", "status": "PARTIAL", "evidence": "tests/deep_eval.py reports 40/40 classifications correct and local p50/p95 guard latency of approximately 16.4/29.6 ms; the historical 25 ms p95 target is not met by this recorded run."},
+    {"id": "TS-05", "status": "PARTIAL", "evidence": "tests/deep_eval.py reports 40/40 classifications correct and local p50/p95 guard latency of approximately 41.5/46.7 ms; the historical 25 ms p95 target is not met by this recorded run."},
     {"id": "proxy", "status": "PARTIAL", "evidence": "FastAPI contract and payload boundary work; production provider forwarding and deployment authentication remain target-environment work."},
     {"id": "mcp", "status": "PARTIAL", "evidence": "Declared stdio tools work, but the adapter is a lightweight JSON transport rather than the official MCP SDK protocol."},
     {"id": "sdk", "status": "PASS", "evidence": "SDK tests verify safe functions proceed and paused functions are not invoked."},

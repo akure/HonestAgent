@@ -12,6 +12,18 @@ AI infrastructure teams are increasingly responsible for agents that can read an
 
 Honest Agent is designed for platform engineers operating agents in regulated or high-consequence workflows. It is framework-neutral and can be adopted through an OpenAI-compatible HTTP proxy, MCP, a Python decorator, or an IDE skill file.
 
+## Who has this problem
+
+The primary user is an AI platform engineer responsible for an agent that can write to a system of record, send an external message, deploy software, or spend money. The bottleneck is the last step before execution: ordinary agent frameworks can produce a plausible tool call, but the application still needs a deterministic, reviewable answer to whether the proposed action is grounded, authorized, and safe to execute.
+
+## Why an agentic safety boundary
+
+The agent remains responsible for proposing structured actions and gathering context. HonestAgent adds the verification capability that a prompt or post-hoc log cannot provide: deterministic policy classification, bounded verification, a human checkpoint for consequential actions, request-bound executor handoff, and an attributable trajectory. The primary success metric is interception **before execution** on an identical synthetic case set, with safe-action pass-through and latency reported separately.
+
+## Original work and third-party components
+
+The repository’s original work is the HonestAgent guardrail contract, policy and checkpoint flow, executor handoff validation, audit trajectory handling, integration adapters, evidence runners, tests, and release documentation. FastAPI, Pydantic, Uvicorn, HTTPX, pytest, optional provider SDKs, and other dependencies remain third-party components under their respective licenses. Their use does not imply endorsement, and their licenses must be preserved when applicable.
+
 ## Core capabilities
 
 | Capability | What it does |
@@ -91,7 +103,7 @@ The model verifier never directly authorizes an irreversible action. Determinist
 
 ## Evaluation status
 
-The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest verified run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 16.4/29.6 ms on the audit machine. The repository regression suite contains 81 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency. Machine-readable requirement evidence and limitations are recorded in [`requirements_eval_results.json`](requirements_eval_results.json).
+The internal deterministic evaluation currently covers 40 synthetic cases: 20 labeled unsafe and 20 labeled safe. The latest run achieved 20/20 unsafe actions intercepted before execution, 20/20 safe actions allowed, zero false negatives, zero false positives, and p50/p95 guard latency of approximately 41.5/46.7 ms on the audit machine. The repository regression suite contains 81 passing tests. These results describe the included fixtures and offline verifier only; they are not a production guarantee or a measurement of live provider latency. Machine-readable requirement evidence and limitations are recorded in [`requirements_eval_results.json`](requirements_eval_results.json).
 
 Run the reproducible evaluation with:
 
