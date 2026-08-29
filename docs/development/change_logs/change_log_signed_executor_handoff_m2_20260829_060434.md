@@ -7,7 +7,7 @@
 | Milestone / sprint | `M2 / Sprint 3` |
 | Timestamp UTC | `2026-08-29 06:04:34` |
 | Related tasks | `HA-007`, `HA-009` |
-| Related commit | `{filled after commit}` |
+| Related commit | [`9a66301`](https://github.com/akure/HonestAgent/commit/9a66301) |
 
 ## Problem
 
