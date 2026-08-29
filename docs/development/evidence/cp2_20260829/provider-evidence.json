@@ -1,0 +1,5 @@
+{
+  "status": "NOT_MEASURED",
+  "reason": "HONEST_AGENT_PROVIDER_ENDPOINT, HONEST_AGENT_PROVIDER_API_KEY, and HONEST_AGENT_PROVIDER_MODEL are required",
+  "secret_logged": false
+}
