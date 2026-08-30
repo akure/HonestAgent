@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- EA-4 synthetic Ecommerce and Customer Support policy packs with ownership, refund, account-change, identity, escalation, knowledge-freshness, and sensitive-data boundaries. Evidence: `docs/development/sprint_traces/sprint_ea4_ecommerce_support_policy_packs_20260830.md`.
 - EA-3 synthetic Trading and Forecasting policy packs with pre-trade caps, venue/account scope, idempotency, forecast lineage, freshness, contradiction handling, review boundaries, and no-live-execution hard stops. Evidence: `docs/development/sprint_traces/sprint_ea3_trading_forecasting_policy_packs_20260830.md`.
 - EA-2 synthetic Healthcare and Recruiting/HR policy packs with dry-run rollout, evidence requirements, idempotency controls, human-review boundaries, and hard stops for clinical and autonomous employment decisions. Evidence: `docs/development/sprint_traces/sprint_ea2_healthcare_hr_policy_packs_20260830.md`.
 - EA-0/EA-1 domain policy-pack foundation: tenant-scoped Pydantic contract, bounded deterministic evaluator, HMAC-SHA256 signed lifecycle registry, and optional fail-closed `HonestGuard` gate. Evidence: `docs/development/sprint_traces/sprint_ea1_domain_policy_pack_foundation_20260830.md` and `docs/development/change_logs/change_log_sprint_ea1_domain_policy_pack_foundation_20260830_135600.md`.
@@ -45,6 +46,7 @@ The current repository state is a proprietary, source-available development rele
 - EA-1 regression suite: **92 passed** in the post-integration full run, including signature tamper, tenant isolation, malformed evidence, prohibited action, and guard-gate tests.
 - EA-2 artifact and full regression suite: **94 passed**, including synthetic Healthcare/HR pack validation and hard-stop assertions.
 - EA-3 artifact and full regression suite: **99 passed**, including synthetic Trading/Forecasting caps, stale/contradictory evidence, lineage, replay, and hard-stop assertions.
+- EA-4 artifact and full regression suite: **103 passed**, including synthetic Ecommerce/Support ownership, refund, identity, freshness, replay, and hard-stop assertions.
 - Deterministic deep evaluation: **20/20 unsafe actions intercepted** and **20/20 safe actions allowed** on 40 synthetic cases.
 - Shared 12-case benchmark: pass-through baseline caught **0/10** unsafe actions; HonestAgent caught **10/10**.
 - Latest local deep-evaluation latency: approximately **41.5 ms p50** and **46.7 ms p95**; the historical 25 ms p95 target is not met by that run.
@@ -133,6 +135,7 @@ The following index reconciles every file currently present in `docs/development
 | `change_log_sprint_ea1_domain_policy_pack_foundation_20260830_135600.md` | EA-0/EA-1 domain policy foundation | Tenant-scoped signed packs, deterministic evaluation, lifecycle controls, and additive guard integration passed local regression tests. |
 | `change_log_sprint_ea2_healthcare_hr_policy_packs_20260830_140300.md` | EA-2 Healthcare and HR packs | Synthetic dry-run packs and hard-stop regression tests passed; no production or regulatory claim. |
 | `change_log_sprint_ea3_trading_forecasting_policy_packs_20260830_140700.md` | EA-3 Trading and Forecasting packs | Synthetic pre-trade and forecast-planning controls passed local tests; no live execution or commitment claim. |
+| `change_log_sprint_ea4_ecommerce_support_policy_packs_20260830_141000.md` | EA-4 Ecommerce and Support packs | Synthetic refund, account, identity, escalation, and freshness controls passed local tests; no live remediation claim. |
 | `change_log_launch_readiness_audit_20260829_083000.md` | Final audit | Found and fixed missing guard-endpoint payload-size enforcement; historical 81-test verification passed. |
 | `change_log_github_history_reconciliation_20260829_100500.md` | Git history | One-to-one chronological ledger covering all 64 commits reachable on `main` at reconciliation time. |
 | `change_log_ops_audit_redaction_20260829_100800.md` | Ops privacy fix | Found and fixed unsanitized PMF event values; added nested redaction regression coverage. |

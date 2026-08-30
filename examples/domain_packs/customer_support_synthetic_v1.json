@@ -1,0 +1,228 @@
+{
+  "actions": {
+    "account_recovery": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "ACCOUNT_RECOVERY_IDENTITY_PROOF_REQUIRED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "change_entitlement": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "entitlement",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ENTITLEMENT_CHANGE_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "support_supervisor"
+      ],
+      "requires_review": true
+    },
+    "classify_route_ticket": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "queue",
+          "type": "allowed_values",
+          "values": [
+            "general",
+            "billing",
+            "privacy",
+            "safety",
+            "technical"
+          ]
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "TICKET_ROUTING_ALLOWED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "collect_secret": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "SECRET_COLLECTION_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "draft_response": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "response_text",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "RESPONSE_DRAFT_NO_AUTOSEND",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "issue_knowledge_guidance": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "source_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "KNOWLEDGE_GUIDANCE_CITED",
+      "required_evidence": [
+        "knowledge_freshness"
+      ],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "refund_credit_request": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "amount",
+          "maximum": 250,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "REFUND_CREDIT_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "support_supervisor"
+      ],
+      "requires_review": true
+    },
+    "retrieve_ticket_status": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "ticket_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "TICKET_STATUS_SCOPE_CHECK",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    }
+  },
+  "approval": {
+    "allowed_roles": [
+      "commerce_operator",
+      "support_supervisor"
+    ],
+    "quorum": 1,
+    "required_for_irreversible": true,
+    "separation_of_duties": true
+  },
+  "data_controls": {
+    "allowed_egress_classes": [
+      "internal"
+    ],
+    "default_classification": "confidential",
+    "redact_fields": [
+      "customer_id",
+      "email",
+      "phone",
+      "secret"
+    ],
+    "retention_seconds": 3600
+  },
+  "domain": "customer_support",
+  "evidence": {
+    "max_age_seconds": 300,
+    "on_missing": "PAUSE",
+    "require_provenance": true,
+    "required": [
+      "customer_auth",
+      "ticket_scope"
+    ]
+  },
+  "limits": {
+    "kill_switch_required": true,
+    "max_action_rate_per_minute": 30,
+    "max_amount": 250,
+    "max_concurrent_actions": 4,
+    "max_quantity": 20
+  },
+  "metadata": {
+    "production_authorization": false,
+    "synthetic": true
+  },
+  "pack_id": "customer-support-synthetic",
+  "pack_version": "v1",
+  "policy_version": "support-ops-v1",
+  "rollout": {
+    "canary_percent": 0,
+    "dry_run_required": true,
+    "mode": "dry_run",
+    "stop_conditions": [
+      "refund_rate",
+      "identity_failure_rate",
+      "error_rate"
+    ]
+  },
+  "schema_version": "1.0",
+  "signature": {
+    "algorithm": "HMAC-SHA256",
+    "key_id": "managed",
+    "signed_fields": [
+      "schema_version",
+      "pack_id",
+      "pack_version",
+      "tenant_id",
+      "domain",
+      "policy_version"
+    ],
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "status": "DRAFT",
+  "tenant_id": "synthetic-support-tenant"
+}

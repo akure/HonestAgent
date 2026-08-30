@@ -10,6 +10,8 @@ These artifacts are **synthetic examples only** for the EA-2 Healthcare and Recr
 | `recruiting_hr_synthetic_v1.json` | Recruiting workflow assistance | No autonomous rejection, hiring, compensation, promotion, or termination decision. |
 | `trading_pretrade_synthetic_v1.json` | Pre-trade proposal controls | No live order submission or settlement transfer; synthetic venue and notional/quantity caps only. |
 | `forecasting_planning_synthetic_v1.json` | Forecast planning and scenario support | No committed planning action; stale or contradictory evidence pauses/rejects. |
+| `ecommerce_operations_synthetic_v1.json` | Catalog, order, and refund operations | No payment capture; refund, cancellation, and address changes require review. |
+| `customer_support_synthetic_v1.json` | Agent-assisted support operations | No secret collection or autonomous account recovery; remediation requires review. |
 
 ## Import workflow
 

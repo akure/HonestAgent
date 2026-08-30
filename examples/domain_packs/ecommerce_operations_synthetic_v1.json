@@ -1,0 +1,244 @@
+{
+  "actions": {
+    "cancel_order": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "order_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ORDER_CANCELLATION_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "support_supervisor"
+      ],
+      "requires_review": true
+    },
+    "capture_payment": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "PAYMENT_CAPTURE_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "cart_update": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "customer_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "quantity",
+          "maximum": 20,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "CART_UPDATE_OWNERSHIP_SCOPED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "change_shipping_address": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "order_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "shipping_address",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ADDRESS_CHANGE_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "support_supervisor"
+      ],
+      "requires_review": true
+    },
+    "discount_proposal": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "discount_percent",
+          "maximum": 25,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "DISCOUNT_PROPOSAL_CAPPED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "inventory_read": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "product_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "INVENTORY_READ_ALLOWED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "order_draft": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "customer_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "quantity",
+          "type": "required_fields"
+        },
+        {
+          "field": "quantity",
+          "maximum": 20,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ORDER_DRAFT_NO_CAPTURE",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "product_lookup": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "product_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "PRODUCT_LOOKUP_ALLOWED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "refund_request": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "order_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "amount",
+          "maximum": 250,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "REFUND_REQUIRES_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "support_supervisor"
+      ],
+      "requires_review": true
+    }
+  },
+  "approval": {
+    "allowed_roles": [
+      "commerce_operator",
+      "support_supervisor"
+    ],
+    "quorum": 1,
+    "required_for_irreversible": true,
+    "separation_of_duties": true
+  },
+  "data_controls": {
+    "allowed_egress_classes": [
+      "internal"
+    ],
+    "default_classification": "confidential",
+    "redact_fields": [
+      "customer_id",
+      "email",
+      "shipping_address"
+    ],
+    "retention_seconds": 3600
+  },
+  "domain": "ecommerce",
+  "evidence": {
+    "max_age_seconds": 300,
+    "on_missing": "PAUSE",
+    "require_provenance": true,
+    "required": [
+      "customer_auth",
+      "order_ownership"
+    ]
+  },
+  "limits": {
+    "kill_switch_required": true,
+    "max_action_rate_per_minute": 30,
+    "max_amount": 250,
+    "max_concurrent_actions": 4,
+    "max_quantity": 20
+  },
+  "metadata": {
+    "production_authorization": false,
+    "synthetic": true
+  },
+  "pack_id": "ecommerce-operations-synthetic",
+  "pack_version": "v1",
+  "policy_version": "ecommerce-ops-v1",
+  "rollout": {
+    "canary_percent": 0,
+    "dry_run_required": true,
+    "mode": "dry_run",
+    "stop_conditions": [
+      "refund_rate",
+      "identity_failure_rate",
+      "error_rate"
+    ]
+  },
+  "schema_version": "1.0",
+  "signature": {
+    "algorithm": "HMAC-SHA256",
+    "key_id": "managed",
+    "signed_fields": [
+      "schema_version",
+      "pack_id",
+      "pack_version",
+      "tenant_id",
+      "domain",
+      "policy_version"
+    ],
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "status": "DRAFT",
+  "tenant_id": "synthetic-ecommerce-tenant"
+}
