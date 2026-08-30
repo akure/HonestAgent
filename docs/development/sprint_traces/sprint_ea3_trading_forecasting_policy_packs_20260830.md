@@ -43,7 +43,7 @@ Freshness and contradiction handling were added to the generic evaluator rather 
 
 | Commit | Message | Remote status |
 |---|---|---|
-| Pending | `feat(domain): add synthetic trading and forecasting packs` | Pending commit and push |
+| `ab5412f` | `feat(domain): add synthetic trading and forecasting packs` | Published on `origin/main` |
 
 ## Milestone decision
 
