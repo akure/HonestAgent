@@ -1,6 +1,8 @@
 # Contributing to Honest Agent
 
-Thank you for helping improve a safety-oriented open-source project. Contributions should make the pre-execution boundary more reliable, more explainable, or easier to integrate without weakening deterministic controls around consequential actions.
+Thank you for helping improve a safety-oriented project. Contributions should make the pre-execution boundary more reliable, more explainable, or easier to integrate without weakening deterministic controls around consequential actions.
+
+The complete branch, commit, review, release, tagging, hotfix, and rollback process is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md).
 
 ## Development workflow
 
