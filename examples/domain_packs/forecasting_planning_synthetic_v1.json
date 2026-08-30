@@ -1,0 +1,169 @@
+{
+  "actions": {
+    "commit_planning_plan": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "PLANNING_COMMIT_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "create_scenario": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "scenario_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "SCENARIO_NOT_COMMITMENT",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "generate_forecast": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "dataset_version",
+          "type": "required_fields"
+        },
+        {
+          "field": "horizon",
+          "type": "required_fields"
+        },
+        {
+          "field": "horizon",
+          "maximum": 52,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "FORECAST_GENERATION_EVIDENCE_REQUIRED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "publish_forecast_draft": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "dataset_version",
+          "type": "required_fields"
+        },
+        {
+          "field": "horizon",
+          "maximum": 52,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "FORECAST_PUBLICATION_REVIEW",
+      "required_evidence": [],
+      "required_roles": [
+        "trading_supervisor"
+      ],
+      "requires_review": true
+    },
+    "retrieve_series": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "dataset_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "dataset_version",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "SERIES_RETRIEVAL_LINEAGE_REQUIRED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    }
+  },
+  "approval": {
+    "allowed_roles": [
+      "trading_supervisor",
+      "forecast_owner"
+    ],
+    "quorum": 1,
+    "required_for_irreversible": true,
+    "separation_of_duties": true
+  },
+  "data_controls": {
+    "allowed_egress_classes": [
+      "internal"
+    ],
+    "default_classification": "internal",
+    "redact_fields": [
+      "account_id",
+      "instrument_id"
+    ],
+    "retention_seconds": 3600
+  },
+  "domain": "forecasting",
+  "evidence": {
+    "max_age_seconds": 60,
+    "on_missing": "PAUSE",
+    "require_provenance": true,
+    "required": [
+      "dataset_lineage",
+      "freshness"
+    ]
+  },
+  "limits": {
+    "kill_switch_required": true,
+    "max_action_rate_per_minute": 20,
+    "max_amount": 1000000,
+    "max_concurrent_actions": 2,
+    "max_quantity": 10000
+  },
+  "metadata": {
+    "production_authorization": false,
+    "synthetic": true
+  },
+  "pack_id": "forecast-planning-synthetic",
+  "pack_version": "v1",
+  "policy_version": "forecast-planning-v1",
+  "rollout": {
+    "canary_percent": 0,
+    "dry_run_required": true,
+    "mode": "dry_run",
+    "stop_conditions": [
+      "stale_data",
+      "limit_breach",
+      "error_rate"
+    ]
+  },
+  "schema_version": "1.0",
+  "signature": {
+    "algorithm": "HMAC-SHA256",
+    "key_id": "managed",
+    "signed_fields": [
+      "schema_version",
+      "pack_id",
+      "pack_version",
+      "tenant_id",
+      "domain",
+      "policy_version"
+    ],
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "status": "DRAFT",
+  "tenant_id": "synthetic-forecast-tenant"
+}

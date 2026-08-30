@@ -254,6 +254,12 @@ class DeterministicDomainPolicyEvaluator:
         evidence_map = evidence or {}
         required = tuple(dict.fromkeys((*self.pack.evidence.required, *rule.required_evidence)))
         missing = tuple(name for name in required if not evidence_map.get(name))
+        contradictory = tuple(name for name in required if isinstance(evidence_map.get(name), Mapping) and evidence_map[name].get("contradictory") is True)
+        stale = tuple(name for name in required if isinstance(evidence_map.get(name), Mapping) and isinstance(evidence_map[name].get("age_seconds"), (int, float)) and evidence_map[name]["age_seconds"] > self.pack.evidence.max_age_seconds)
+        if contradictory:
+            return PolicyFinding(EvaluationOutcome.REJECT, ("CONTRADICTORY_EVIDENCE",), tuple(rule.required_roles), missing_evidence=contradictory, **base)
+        if stale:
+            return PolicyFinding(EvaluationOutcome.PAUSE, ("STALE_EVIDENCE",), tuple(rule.required_roles), missing_evidence=stale, **base)
         if missing:
             outcome = EvaluationOutcome.PAUSE if self.pack.evidence.on_missing == MissingEvidenceAction.PAUSE else EvaluationOutcome.REJECT
             return PolicyFinding(outcome, ("MISSING_EVIDENCE",), tuple(rule.required_roles), missing, **base)
@@ -278,6 +284,8 @@ class DeterministicDomainPolicyEvaluator:
                 failures.append(f"MINIMUM_NOT_MET_{constraint.field.upper().replace('.', '_')}")
             elif constraint.type == ConstraintType.MATCHES_PATTERN and (not isinstance(value, str) or re.fullmatch(constraint.pattern or "", value) is None):
                 failures.append(f"PATTERN_MISMATCH_{constraint.field.upper().replace('.', '_')}")
+            elif constraint.type == ConstraintType.MAX_AGE_SECONDS and (not isinstance(value, Mapping) or not isinstance(value.get("age_seconds"), (int, float)) or value["age_seconds"] > (constraint.maximum if constraint.maximum is not None else self.pack.evidence.max_age_seconds)):
+                failures.append(f"STALE_{constraint.field.upper().replace('.', '_')}")
             elif constraint.type == ConstraintType.IDEMPOTENCY_REQUIRED and not request.metadata.get("idempotency_key"):
                 failures.append("IDEMPOTENCY_KEY_REQUIRED")
         return failures

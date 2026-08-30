@@ -8,6 +8,8 @@ These artifacts are **synthetic examples only** for the EA-2 Healthcare and Recr
 |---|---|---|
 | `healthcare_operations_synthetic_v1.json` | Clinical-support and healthcare operations | No PHI export, diagnosis, treatment, prescription, or clinical-order execution. |
 | `recruiting_hr_synthetic_v1.json` | Recruiting workflow assistance | No autonomous rejection, hiring, compensation, promotion, or termination decision. |
+| `trading_pretrade_synthetic_v1.json` | Pre-trade proposal controls | No live order submission or settlement transfer; synthetic venue and notional/quantity caps only. |
+| `forecasting_planning_synthetic_v1.json` | Forecast planning and scenario support | No committed planning action; stale or contradictory evidence pauses/rejects. |
 
 ## Import workflow
 

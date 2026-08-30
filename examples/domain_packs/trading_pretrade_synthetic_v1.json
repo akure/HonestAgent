@@ -1,0 +1,192 @@
+{
+  "actions": {
+    "draft_order": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "account_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "instrument_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "side",
+          "type": "allowed_values",
+          "values": [
+            "BUY",
+            "SELL"
+          ]
+        },
+        {
+          "field": "quantity",
+          "maximum": 10000,
+          "type": "max_numeric"
+        },
+        {
+          "field": "notional",
+          "maximum": 1000000,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ORDER_DRAFT_LIMITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "market_data_lookup": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "instrument_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "venue",
+          "type": "allowed_values",
+          "values": [
+            "SYNTHETIC_VENUE"
+          ]
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "MARKET_DATA_READ",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "portfolio_exposure": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "account_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "PORTFOLIO_EXPOSURE_READ",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "submit_order": {
+      "action_class": "irreversible",
+      "constraints": [
+        {
+          "field": "account_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "instrument_id",
+          "type": "required_fields"
+        },
+        {
+          "field": "quantity",
+          "maximum": 10000,
+          "type": "max_numeric"
+        },
+        {
+          "field": "notional",
+          "maximum": 1000000,
+          "type": "max_numeric"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ORDER_SUBMISSION_REVIEW",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": true
+    },
+    "transfer_settlement": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "SETTLEMENT_TRANSFER_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    }
+  },
+  "approval": {
+    "allowed_roles": [
+      "trading_supervisor",
+      "forecast_owner"
+    ],
+    "quorum": 1,
+    "required_for_irreversible": true,
+    "separation_of_duties": true
+  },
+  "data_controls": {
+    "allowed_egress_classes": [
+      "internal"
+    ],
+    "default_classification": "confidential",
+    "redact_fields": [
+      "account_id",
+      "instrument_id"
+    ],
+    "retention_seconds": 3600
+  },
+  "domain": "financial_trading",
+  "evidence": {
+    "max_age_seconds": 60,
+    "on_missing": "PAUSE",
+    "require_provenance": true,
+    "required": [
+      "quote",
+      "buying_power"
+    ]
+  },
+  "limits": {
+    "kill_switch_required": true,
+    "max_action_rate_per_minute": 20,
+    "max_amount": 1000000,
+    "max_concurrent_actions": 2,
+    "max_quantity": 10000
+  },
+  "metadata": {
+    "production_authorization": false,
+    "synthetic": true
+  },
+  "pack_id": "trading-pretrade-synthetic",
+  "pack_version": "v1",
+  "policy_version": "trading-pretrade-v1",
+  "rollout": {
+    "canary_percent": 0,
+    "dry_run_required": true,
+    "mode": "dry_run",
+    "stop_conditions": [
+      "stale_data",
+      "limit_breach",
+      "error_rate"
+    ]
+  },
+  "schema_version": "1.0",
+  "signature": {
+    "algorithm": "HMAC-SHA256",
+    "key_id": "managed",
+    "signed_fields": [
+      "schema_version",
+      "pack_id",
+      "pack_version",
+      "tenant_id",
+      "domain",
+      "policy_version"
+    ],
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "status": "DRAFT",
+  "tenant_id": "synthetic-trading-tenant"
+}
