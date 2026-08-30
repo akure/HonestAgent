@@ -1,0 +1,1 @@
+# Optional framework dependency is intentionally omitted; local demo uses deterministic stubs.

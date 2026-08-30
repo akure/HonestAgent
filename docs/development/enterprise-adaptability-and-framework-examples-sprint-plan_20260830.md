@@ -456,4 +456,4 @@ The examples should depend on the published or local package interface, not impo
 
 ## Review checkpoint
 
-This document is intentionally uncommitted. Implementation should begin only after the decisions above are resolved and the accepted scope is recorded in an ADR and sprint trace.
+The decisions above were resolved for this implementation tranche: six domains, five framework targets, core-package policy contracts with opt-in configuration artifacts, synthetic side-effect-free examples, and proprietary commercial boundaries. EA-0 through EA-4 are complete; EA-5 through EA-7 are implemented in the current checkpoint with local evidence recorded in the corresponding sprint trace. Production deployment remains subject to separate evidence and authorization.
