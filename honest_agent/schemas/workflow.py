@@ -22,6 +22,7 @@ class WorkflowBudgets(ContractBase):
     fan_out: int = Field(default=1, ge=0)
     concurrency: int = Field(default=1, ge=0)
     cumulative_amount: float = Field(default=0.0, ge=0.0)
+    wall_clock_seconds: float = Field(default=3600.0, gt=0.0)
 
     def attenuate(self, child: "WorkflowBudgets") -> "WorkflowBudgets":
         if any(getattr(child, field) > getattr(self, field) for field in self.model_fields):
