@@ -14,6 +14,7 @@ from honest_agent.core.policy import ActionPolicy
 from honest_agent.core.sqlite_checkpoints import SQLiteCheckpointStore
 from honest_agent.core.policy_registry import PolicyRegistry
 from honest_agent.core.verifier import VerifierEngine
+from honest_agent.domain.policy_pack import DomainPolicyEvaluator, EvaluationOutcome
 from honest_agent.schemas.models import (
     CheckpointStatus,
     Config,
@@ -28,7 +29,7 @@ from honest_agent.schemas.models import (
 
 
 class HonestGuard:
-    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None, store: CheckpointStore | None = None, policy_registry: PolicyRegistry | None = None):
+    def __init__(self, config: Config | None = None, verifier: VerifierEngine | None = None, logger: TrajectoryLogger | None = None, policy: ActionPolicy | None = None, store: CheckpointStore | None = None, policy_registry: PolicyRegistry | None = None, domain_evaluator: DomainPolicyEvaluator | None = None):
         self.config = config or Config()
         self.evaluator = ContextEvaluator()
         self.verifier = verifier or VerifierEngine()
@@ -36,6 +37,7 @@ class HonestGuard:
         self.store = store or (SQLiteCheckpointStore(self.config.checkpoint_database_path, self.config.checkpoint_retention_seconds) if self.config.checkpoint_backend == "sqlite" else FileCheckpointStore(self.config.checkpoint_path, self.config.checkpoint_retention_seconds))
         self.signer = HandoffSigner(self.config.handoff_secret, self.config.handoff_ttl_seconds, self.config.handoff_previous_secrets)
         self.policy_registry = policy_registry
+        self.domain_evaluator = domain_evaluator
         self.policy = policy or (policy_registry.get_policy() if policy_registry else ActionPolicy())
         self.check_count = 0
         self.pending: Dict[str, GuardDecision] = {}
@@ -76,6 +78,35 @@ class HonestGuard:
                     action_taken="REJECTED_BEFORE_EXECUTION",
                 )
             self.check_count += 1
+
+        if self.domain_evaluator is not None:
+            finding = self.domain_evaluator.evaluate(request, evidence=request.metadata.get("evidence"))
+            if finding.outcome != EvaluationOutcome.ALLOW:
+                status = DecisionStatus.PAUSED if finding.outcome == EvaluationOutcome.PAUSE else DecisionStatus.REJECTED
+                action = "PAUSED_FOR_DOMAIN_POLICY" if status == DecisionStatus.PAUSED else "REJECTED_DOMAIN_POLICY"
+                decision = GuardDecision(
+                    status=status,
+                    confidence_score=0.0,
+                    verifier_tier=VerifierTier.FAST,
+                    hallucination_risk=RiskLevel.HIGH,
+                    action_class=policy.action_class,
+                    policy_version=finding.policy_version or policy.policy_version,
+                    reasoning=f"domain policy {finding.pack_id}@{finding.pack_version}: {','.join(finding.reason_codes)}",
+                    recommended_action=RecommendedAction.REQUIRE_HUMAN_CHECKPOINT,
+                    human_checkpoint=HumanCheckpoint(status=CheckpointStatus.PENDING) if status == DecisionStatus.PAUSED else None,
+                    context_token_count=0,
+                    context_token_ratio=0.0,
+                    action_taken=action,
+                )
+                if status == DecisionStatus.PAUSED:
+                    self.pending[decision.trajectory_id] = decision
+                    self.pending_requests[decision.trajectory_id] = request
+                    self.store.put_pending(request, decision)
+                else:
+                    self.store.put_resolved(request, decision)
+                    self.resolved[decision.trajectory_id] = decision
+                decision.trajectory_path = str(self.logger.write(request, decision))
+                return decision
 
         telemetry = self.evaluator.evaluate(request.context, request.max_context_tokens, self.config.escalation_ratio)
         tier = self._tier_for(request, telemetry.ratio)
@@ -184,4 +215,3 @@ class HonestGuard:
         except HandoffError:
             return False
         return True
-
