@@ -42,7 +42,7 @@ The packs remain DRAFT, synthetic, credential-free, and dry-run only. Customer o
 
 | Commit | Message | Remote status |
 |---|---|---|
-| Pending | `feat(domain): add synthetic ecommerce and support packs` | Pending commit and push |
+| `4352e4e` | `feat(domain): add synthetic ecommerce and support packs` | Published on `origin/main` |
 
 ## Milestone decision
 
