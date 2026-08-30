@@ -2,7 +2,7 @@
 
 ## Status
 
-**Draft for review only.** No application features are implemented by this plan, and no commit is proposed until the plan is approved.
+**Approved implementation plan.** EA-0/EA-1 are complete; EA-2 is the active workstream. Each subsequent sprint remains subject to its own regression evidence and checkpoint review.
 
 ## Objective
 

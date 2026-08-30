@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- EA-2 synthetic Healthcare and Recruiting/HR policy packs with dry-run rollout, evidence requirements, idempotency controls, human-review boundaries, and hard stops for clinical and autonomous employment decisions. Evidence: `docs/development/sprint_traces/sprint_ea2_healthcare_hr_policy_packs_20260830.md`.
 - EA-0/EA-1 domain policy-pack foundation: tenant-scoped Pydantic contract, bounded deterministic evaluator, HMAC-SHA256 signed lifecycle registry, and optional fail-closed `HonestGuard` gate. Evidence: `docs/development/sprint_traces/sprint_ea1_domain_policy_pack_foundation_20260830.md` and `docs/development/change_logs/change_log_sprint_ea1_domain_policy_pack_foundation_20260830_135600.md`.
 
 ## 0.1.0 — 2026-08-29 — Conditional-pilot evidence release
@@ -41,6 +42,7 @@ The current repository state is a proprietary, source-available development rele
 
 - Full regression suite: **83 passed**.
 - EA-1 regression suite: **92 passed** in the post-integration full run, including signature tamper, tenant isolation, malformed evidence, prohibited action, and guard-gate tests.
+- EA-2 artifact and full regression suite: **94 passed**, including synthetic Healthcare/HR pack validation and hard-stop assertions.
 - Deterministic deep evaluation: **20/20 unsafe actions intercepted** and **20/20 safe actions allowed** on 40 synthetic cases.
 - Shared 12-case benchmark: pass-through baseline caught **0/10** unsafe actions; HonestAgent caught **10/10**.
 - Latest local deep-evaluation latency: approximately **41.5 ms p50** and **46.7 ms p95**; the historical 25 ms p95 target is not met by that run.
@@ -127,6 +129,7 @@ The following index reconciles every file currently present in `docs/development
 | `change_log_sprint_cp6_policy_governance_20260829_103000.md` | CP-6 governance | Six policy lifecycle tests passed; enterprise custody and authority remained not measured. |
 | `change_log_sprint_cp7_platform_security_operations_20260829_110000.md` | CP-7 operations | Eighteen tests, compilation, dependency scan, and secret scan passed locally; host/platform drills remained partial. |
 | `change_log_sprint_ea1_domain_policy_pack_foundation_20260830_135600.md` | EA-0/EA-1 domain policy foundation | Tenant-scoped signed packs, deterministic evaluation, lifecycle controls, and additive guard integration passed local regression tests. |
+| `change_log_sprint_ea2_healthcare_hr_policy_packs_20260830_140300.md` | EA-2 Healthcare and HR packs | Synthetic dry-run packs and hard-stop regression tests passed; no production or regulatory claim. |
 | `change_log_launch_readiness_audit_20260829_083000.md` | Final audit | Found and fixed missing guard-endpoint payload-size enforcement; historical 81-test verification passed. |
 | `change_log_github_history_reconciliation_20260829_100500.md` | Git history | One-to-one chronological ledger covering all 64 commits reachable on `main` at reconciliation time. |
 | `change_log_ops_audit_redaction_20260829_100800.md` | Ops privacy fix | Found and fixed unsanitized PMF event values; added nested redaction regression coverage. |

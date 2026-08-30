@@ -1,0 +1,177 @@
+{
+  "actions": {
+    "clinical_recommendation": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "patient_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "CLINICAL_RECOMMENDATION_HUMAN_REVIEW",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": true
+    },
+    "draft_patient_message": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "patient_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "PATIENT_MESSAGE_DRAFT_ONLY",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "export_phi": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "PHI_EXPORT_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "place_clinical_order": {
+      "action_class": "reversible",
+      "constraints": [],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": true,
+      "reason_code": "CLINICAL_ORDER_PROHIBITED",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "read_patient": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "patient_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "PATIENT_READ_MINIMUM_NECESSARY",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "schedule_appointment": {
+      "action_class": "reversible",
+      "constraints": [
+        {
+          "field": "patient_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": true,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "APPOINTMENT_SCHEDULE_IDEMPOTENT",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    },
+    "summarize_encounter": {
+      "action_class": "read_only",
+      "constraints": [
+        {
+          "field": "patient_id",
+          "type": "required_fields"
+        }
+      ],
+      "idempotency_required": false,
+      "max_retries": 0,
+      "prohibited": false,
+      "reason_code": "ENCOUNTER_SUMMARY_FOR_REVIEW",
+      "required_evidence": [],
+      "required_roles": [],
+      "requires_review": false
+    }
+  },
+  "approval": {
+    "allowed_roles": [
+      "clinician",
+      "recruiter",
+      "hiring_manager"
+    ],
+    "quorum": 1,
+    "required_for_irreversible": true,
+    "separation_of_duties": true
+  },
+  "data_controls": {
+    "allowed_egress_classes": [
+      "internal"
+    ],
+    "default_classification": "regulated",
+    "redact_fields": [
+      "patient_id",
+      "candidate_email",
+      "phone"
+    ],
+    "retention_seconds": 3600
+  },
+  "domain": "healthcare",
+  "evidence": {
+    "max_age_seconds": 300,
+    "on_missing": "PAUSE",
+    "require_provenance": true,
+    "required": [
+      "authorization",
+      "purpose_of_use"
+    ]
+  },
+  "limits": {
+    "kill_switch_required": true,
+    "max_action_rate_per_minute": 30,
+    "max_amount": null,
+    "max_concurrent_actions": 4,
+    "max_quantity": 10
+  },
+  "metadata": {
+    "production_authorization": false,
+    "synthetic": true
+  },
+  "pack_id": "healthcare-operations-synthetic",
+  "pack_version": "v1",
+  "policy_version": "healthcare-ops-v1",
+  "rollout": {
+    "canary_percent": 0,
+    "dry_run_required": true,
+    "mode": "dry_run",
+    "stop_conditions": [
+      "error_rate",
+      "policy_rejection_rate"
+    ]
+  },
+  "schema_version": "1.0",
+  "signature": {
+    "algorithm": "HMAC-SHA256",
+    "key_id": "managed",
+    "signed_fields": [
+      "schema_version",
+      "pack_id",
+      "pack_version",
+      "tenant_id",
+      "domain",
+      "policy_version"
+    ],
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "status": "DRAFT",
+  "tenant_id": "synthetic-healthcare-tenant"
+}
