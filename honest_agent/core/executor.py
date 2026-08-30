@@ -6,6 +6,7 @@ from typing import Any, Callable, Mapping
 from honest_agent.core.guardrail import HonestGuard
 from honest_agent.interfaces.upstream import UpstreamClient
 from honest_agent.schemas.models import EvaluationRequest
+from honest_agent.schemas.workflow import ToolIntent, WorkflowRunContext
 
 
 class ExecutionBlocked(RuntimeError):
@@ -21,6 +22,16 @@ class CallableExecutor:
     async def execute(self, request: EvaluationRequest, trajectory_id: str, handoff_token: str | None, tool: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         if not handoff_token or not self.guard.validate_handoff(handoff_token, request, trajectory_id):
             raise ExecutionBlocked("execution requires a valid request-bound handoff")
+        result = tool(*args, **kwargs)
+        return await result if inspect.isawaitable(result) else result
+
+    async def execute_v2(self, context: WorkflowRunContext, intent: ToolIntent, evidence_snapshot_id: str, handoff_token: str | None, tool: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+        if not handoff_token:
+            raise ExecutionBlocked("execution requires a valid handoff v2")
+        try:
+            self.guard.signer.validate_v2(handoff_token, context, intent, evidence_snapshot_id)
+        except Exception as exc:
+            raise ExecutionBlocked("execution requires a valid handoff v2") from exc
         result = tool(*args, **kwargs)
         return await result if inspect.isawaitable(result) else result
 

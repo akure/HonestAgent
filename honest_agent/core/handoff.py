@@ -8,6 +8,7 @@ import time
 from typing import Any
 
 from honest_agent.schemas.models import ActionClass, DecisionStatus, EvaluationRequest, ExecutionHandoff, GuardDecision
+from honest_agent.schemas.workflow import ExecutionHandoffV2, ToolIntent, WorkflowRunContext
 
 
 class HandoffError(ValueError):
@@ -47,6 +48,51 @@ class HandoffSigner:
         signature = hmac.new(self.secret, encoded.encode(), hashlib.sha256).hexdigest()
         token = f"{encoded}.{signature}"
         return ExecutionHandoff(**claims, token=token)
+
+    def issue_v2(self, context: WorkflowRunContext, intent: ToolIntent, evidence_snapshot_id: str, destination: str | None = None) -> ExecutionHandoffV2:
+        expires_at = min(int(time.time()) + self.ttl_seconds, int(context.deadline))
+        if expires_at <= int(time.time()):
+            raise HandoffError("workflow context is expired")
+        claims: dict[str, Any] = {
+            "contract_version": "cx2",
+            "run_id": context.run_id,
+            "step_id": context.step_id,
+            "attempt": context.attempt,
+            "tenant_id": context.tenant_id,
+            "policy_snapshot_id": context.policy_snapshot_id,
+            "evidence_snapshot_id": evidence_snapshot_id,
+            "intent_hash": intent.canonical_hash(),
+            "destination": destination or intent.destination,
+            "expires_at": expires_at,
+        }
+        encoded = base64.urlsafe_b64encode(json.dumps(claims, sort_keys=True, separators=(",", ":")).encode()).decode().rstrip("=")
+        signature = hmac.new(self.secret, encoded.encode(), hashlib.sha256).hexdigest()
+        return ExecutionHandoffV2(**claims, token=f"{encoded}.{signature}")
+
+    def validate_v2(self, token: str, context: WorkflowRunContext, intent: ToolIntent, evidence_snapshot_id: str, destination: str | None = None) -> ExecutionHandoffV2:
+        try:
+            encoded, signature = token.split(".", 1)
+            if not any(hmac.compare_digest(signature, hmac.new(key, encoded.encode(), hashlib.sha256).hexdigest()) for key in self.validation_secrets):
+                raise HandoffError("invalid handoff v2 signature")
+            claims = json.loads(base64.urlsafe_b64decode(encoded + "===").decode("utf-8"))
+            handoff = ExecutionHandoffV2(**claims, token=token)
+        except (ValueError, json.JSONDecodeError, UnicodeDecodeError, KeyError) as exc:
+            raise HandoffError("malformed handoff v2 token") from exc
+        if handoff.expires_at <= int(time.time()):
+            raise HandoffError("handoff v2 expired")
+        expected_destination = destination or intent.destination
+        if (
+            handoff.run_id != context.run_id
+            or handoff.step_id != context.step_id
+            or handoff.attempt != context.attempt
+            or handoff.tenant_id != context.tenant_id
+            or handoff.policy_snapshot_id != context.policy_snapshot_id
+            or handoff.evidence_snapshot_id != evidence_snapshot_id
+            or handoff.intent_hash != intent.canonical_hash()
+            or handoff.destination != expected_destination
+        ):
+            raise HandoffError("handoff v2 does not match current workflow state")
+        return handoff
 
     def validate(self, token: str, request: EvaluationRequest, decision: GuardDecision) -> ExecutionHandoff:
         try:

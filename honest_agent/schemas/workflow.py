@@ -175,6 +175,20 @@ class EvidenceEnvelope(ContractBase):
         return self.observed_at <= current and (self.expires_at is None or current < self.expires_at)
 
 
+class ExecutionHandoffV2(ContractBase):
+    contract_version: str = "cx2"
+    run_id: str = Field(min_length=1, max_length=128)
+    step_id: str = Field(min_length=1, max_length=128)
+    attempt: int = Field(ge=1)
+    tenant_id: str = Field(min_length=1, max_length=128)
+    policy_snapshot_id: str = Field(min_length=1, max_length=128)
+    evidence_snapshot_id: str = Field(min_length=1, max_length=128)
+    intent_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    destination: str = Field(min_length=1, max_length=256)
+    expires_at: int = Field(gt=0)
+    token: str = Field(min_length=1)
+
+
 class DecisionRecord(ContractBase):
     contract_version: str = "cx0"
     decision_id: str = Field(min_length=1, max_length=128)
