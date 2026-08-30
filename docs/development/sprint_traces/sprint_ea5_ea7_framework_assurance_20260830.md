@@ -45,7 +45,7 @@ The examples are framework-shaped rather than claiming support for installed fra
 
 | Commit | Message | Remote status |
 |---|---|---|
-| Pending | `feat(examples): add framework adapters and cross-domain assurance` | Pending commit and push |
+| `bccb2f1` | `feat(examples): add framework adapters and cross-domain assurance` | Published on `origin/main` |
 
 ## Milestone decision
 
