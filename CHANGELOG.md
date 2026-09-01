@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- De facto standardization sprint plan covering protocol governance, conformance fixtures, developer experience, RAG reference workflow, durable workflow state, delegation, reliable execution, pinned integrations, independent reproduction, ecosystem adoption, and enterprise packaging. Evidence: `docs/development/de-facto-standardization-sprint-plan_20260901.md`.
 - EA-5–EA-7 framework and assurance tranche: five credential-free adapters, shared conformance tests, compatibility/security documentation, cross-domain assurance matrix, and threat-model update. Evidence: `docs/development/framework-adapter-compatibility-ea6_20260830.md`, `docs/release/ea7-cross-domain-assurance-matrix_20260830.md`, and `docs/security/enterprise-adaptability-threat-model-ea7_20260830.md`.
 - Mature Git workflow and initial implementation release record covering focused branches, review gates, immutable annotated tags, hotfixes, rollback, and conservative release posture. Evidence: `docs/development/git-workflow.md` and `docs/release/v0.1.0-initial-implementation.md`.
 - EA-4 synthetic Ecommerce and Customer Support policy packs with ownership, refund, account-change, identity, escalation, knowledge-freshness, and sensitive-data boundaries. Evidence: `docs/development/sprint_traces/sprint_ea4_ecommerce_support_policy_packs_20260830.md`.
