@@ -7,7 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local deterministic policy and delegation tests |
-| Commit | Pending |
+| Commit | `d11b6c6` |
 
 ## Baseline risk
 

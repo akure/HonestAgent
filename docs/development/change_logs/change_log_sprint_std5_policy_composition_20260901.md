@@ -5,7 +5,7 @@
 | Sprint | STD-5 |
 | Change type | policy / delegation / workflow safety / test |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `d11b6c6` |
 | Evidence class | Local deterministic policy and delegation tests |
 
 ## Change
