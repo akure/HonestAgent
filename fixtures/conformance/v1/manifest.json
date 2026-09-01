@@ -1,0 +1,15 @@
+{
+  "suite": "honestagent.control.v1",
+  "suite_version": "1.0",
+  "profile": "core",
+  "cases": [
+    {"id": "version-highest-compatible-minor", "operation": "negotiate_version", "peer_versions": ["1.0", "1.1", "2.0"], "supported_major": 1, "supported_minor": 1, "expected": {"status": "PASS", "value": "1.1"}},
+    {"id": "version-major-mismatch-fails-closed", "operation": "negotiate_version", "peer_versions": ["2.0"], "supported_major": 1, "supported_minor": 1, "expected": {"status": "ERROR", "error": "ProtocolError"}},
+    {"id": "malformed-version-fails-closed", "operation": "parse_version", "value": "1.x", "expected": {"status": "ERROR", "error": "ProtocolError"}},
+    {"id": "extension-informational", "operation": "validate_extension", "name": "x-example.org:trace", "classification": "informational", "expected": {"status": "PASS", "value": "informational"}},
+    {"id": "unclassified-extension-fails-closed", "operation": "validate_extension", "name": "x-example.org:trace", "classification": "unknown", "expected": {"status": "ERROR", "error": "ProtocolError"}},
+    {"id": "unnamespaced-extension-fails-closed", "operation": "validate_extension", "name": "trace", "classification": "informational", "expected": {"status": "ERROR", "error": "ProtocolError"}},
+    {"id": "canonical-intent-hash", "operation": "intent_hash", "intent": {"tool_name": "lookup", "argument_schema_version": "v1", "canonical_arguments": {"a": 1, "b": 2}, "declared_action_class": "read_only", "resource_scope": {"tenant": "tenant-a"}, "destination": "local", "idempotency_key": "idem-1", "expected_side_effect_mode": "none", "provenance": "model"}, "expected": {"status": "PASS", "value": "e240bdbb690b5ddbf3c78edeb905aea6d541d0fc6ea9315642db81ca8a14089f"}},
+    {"id": "canonical-intent-mutation-changes-hash", "operation": "intent_hash", "intent": {"tool_name": "lookup", "argument_schema_version": "v1", "canonical_arguments": {"a": 9, "b": 2}, "declared_action_class": "read_only", "resource_scope": {"tenant": "tenant-a"}, "destination": "local", "idempotency_key": "idem-1", "expected_side_effect_mode": "none", "provenance": "model"}, "expected": {"status": "PASS", "not_equal_to": "e240bdbb690b5ddbf3c78edeb905aea6d541d0fc6ea9315642db81ca8a14089f"}}
+  ]
+}

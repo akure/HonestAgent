@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- STD-1 golden fixtures and conformance kit: versioned `honestagent.control.v1` core-profile manifest, deterministic runner, machine-readable results, independent-implementation guide, and fail-closed mismatch tests. Evidence: `docs/development/sprint_traces/sprint_std1_conformance_20260901.md`.
 - STD-0 protocol governance and public contract boundary: `honestagent.control.v1` normative semantics, fail-closed version negotiation, namespaced extension rules, trust-boundary threat model, architecture decision record, and public protocol helpers. Evidence: `docs/development/sprint_traces/sprint_std0_protocol_governance_20260901.md`.
 - De facto standardization sprint plan covering protocol governance, conformance fixtures, developer experience, RAG reference workflow, durable workflow state, delegation, reliable execution, pinned integrations, independent reproduction, ecosystem adoption, and enterprise packaging. Evidence: `docs/development/de-facto-standardization-sprint-plan_20260901.md`.
 - EA-5–EA-7 framework and assurance tranche: five credential-free adapters, shared conformance tests, compatibility/security documentation, cross-domain assurance matrix, and threat-model update. Evidence: `docs/development/framework-adapter-compatibility-ea6_20260830.md`, `docs/release/ea7-cross-domain-assurance-matrix_20260830.md`, and `docs/security/enterprise-adaptability-threat-model-ea7_20260830.md`.
