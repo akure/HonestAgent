@@ -7,6 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local synthetic and deterministic test evidence |
+| Commit | `b585825` |
 
 ## Delivered
 

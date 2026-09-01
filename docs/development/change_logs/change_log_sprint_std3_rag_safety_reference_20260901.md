@@ -5,7 +5,7 @@
 | Sprint | STD-3 |
 | Change type | RAG / workflow / safety / test |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `b585825` |
 | Evidence class | Local synthetic and deterministic test evidence |
 
 ## Change
