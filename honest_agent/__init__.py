@@ -11,6 +11,7 @@ from .protocol import (
 from .sdk import GuardBlocked, HonestAgent, make_request
 from .rag_workflow import RAGSafetyWorkflow, RAGWorkflowResult
 from .core.workflow_state import DurableWorkflowStateStore, WorkflowState, WorkflowStateError
+from .core.policy_composition import EffectivePolicy, EffectiveRule, PolicyCompositionError, PolicyComposer, PolicyLayer
 
 __all__ = [
     "ExtensionClass",
@@ -28,4 +29,9 @@ __all__ = [
     "DurableWorkflowStateStore",
     "WorkflowState",
     "WorkflowStateError",
+    "EffectivePolicy",
+    "EffectiveRule",
+    "PolicyCompositionError",
+    "PolicyComposer",
+    "PolicyLayer",
 ]
