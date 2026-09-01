@@ -5,7 +5,7 @@
 | Sprint | STD-0 |
 | Change type | protocol / security / documentation / test |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `10afb04` |
 | Evidence class | Local contract and design evidence |
 
 ## Change

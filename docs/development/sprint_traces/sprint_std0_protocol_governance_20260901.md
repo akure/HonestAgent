@@ -7,6 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local source, contract tests, and design review |
+| Commit | `10afb04` |
 
 ## Baseline
 
