@@ -7,6 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local SQLite state-machine and regression evidence |
+| Commit | `49d0cb3` |
 
 ## Delivered
 

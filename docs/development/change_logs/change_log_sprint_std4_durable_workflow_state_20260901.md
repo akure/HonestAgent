@@ -5,7 +5,7 @@
 | Sprint | STD-4 |
 | Change type | workflow state / approval / persistence / test |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `49d0cb3` |
 | Evidence class | Local SQLite state-machine evidence |
 
 ## Change
