@@ -5,7 +5,7 @@
 | Sprint | STD-1 |
 | Change type | protocol / conformance / test |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `23879ec` |
 | Evidence class | Local deterministic conformance evidence |
 
 ## Change

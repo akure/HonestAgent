@@ -7,6 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local deterministic conformance evidence |
+| Commit | `23879ec` |
 
 ## Delivered
 
