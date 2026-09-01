@@ -10,6 +10,7 @@ from .protocol import (
 )
 from .sdk import GuardBlocked, HonestAgent, make_request
 from .rag_workflow import RAGSafetyWorkflow, RAGWorkflowResult
+from .core.workflow_state import DurableWorkflowStateStore, WorkflowState, WorkflowStateError
 
 __all__ = [
     "ExtensionClass",
@@ -24,4 +25,7 @@ __all__ = [
     "make_request",
     "RAGSafetyWorkflow",
     "RAGWorkflowResult",
+    "DurableWorkflowStateStore",
+    "WorkflowState",
+    "WorkflowStateError",
 ]
