@@ -7,6 +7,7 @@
 | Date | 2026-09-01 |
 | Status | Complete |
 | Evidence class | Local source, offline CLI, and regression tests |
+| Commit | `e4f3741` |
 
 ## Delivered
 

@@ -5,7 +5,7 @@
 | Sprint | STD-2 |
 | Change type | SDK / CLI / test / documentation |
 | Date | 2026-09-01 |
-| Related commit | Pending |
+| Related commit | `e4f3741` |
 | Evidence class | Local source and offline execution evidence |
 
 ## Change
