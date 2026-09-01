@@ -9,6 +9,7 @@ from .protocol import (
     validate_extension,
 )
 from .sdk import GuardBlocked, HonestAgent, make_request
+from .rag_workflow import RAGSafetyWorkflow, RAGWorkflowResult
 
 __all__ = [
     "ExtensionClass",
@@ -21,4 +22,6 @@ __all__ = [
     "GuardBlocked",
     "HonestAgent",
     "make_request",
+    "RAGSafetyWorkflow",
+    "RAGWorkflowResult",
 ]
