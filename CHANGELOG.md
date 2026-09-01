@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- STD-2 Python developer experience and CLI: stable `HonestAgent` facade, guarded-tool decorator, typed blocking errors, non-destructive initializer, credential-free offline demo, and migration guide. Evidence: `docs/development/sprint_traces/sprint_std2_developer_experience_20260901.md`.
 - STD-1 golden fixtures and conformance kit: versioned `honestagent.control.v1` core-profile manifest, deterministic runner, machine-readable results, independent-implementation guide, and fail-closed mismatch tests. Evidence: `docs/development/sprint_traces/sprint_std1_conformance_20260901.md`.
 - STD-0 protocol governance and public contract boundary: `honestagent.control.v1` normative semantics, fail-closed version negotiation, namespaced extension rules, trust-boundary threat model, architecture decision record, and public protocol helpers. Evidence: `docs/development/sprint_traces/sprint_std0_protocol_governance_20260901.md`.
 - De facto standardization sprint plan covering protocol governance, conformance fixtures, developer experience, RAG reference workflow, durable workflow state, delegation, reliable execution, pinned integrations, independent reproduction, ecosystem adoption, and enterprise packaging. Evidence: `docs/development/de-facto-standardization-sprint-plan_20260901.md`.
