@@ -1,0 +1,11 @@
+{
+  "name": "@honestagent/control-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Credential-free TypeScript HTTP client and control-protocol reference implementation",
+  "type": "module",
+  "scripts": {
+    "conformance": "node conformance.mjs ../../fixtures/conformance/v1/manifest.json"
+  },
+  "engines": { "node": ">=20" }
+}
