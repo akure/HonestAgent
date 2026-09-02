@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local synthetic reproduction; not independent or production evidence |
-| Commit | Pending |
+| Commit | `e84e49d` |
 
 ## Baseline risk
 

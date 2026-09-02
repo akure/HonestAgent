@@ -5,7 +5,7 @@
 | Sprint | STD-8 |
 | Change type | benchmark / reproduction / evidence / test |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `e84e49d` |
 | Evidence class | Local synthetic reproduction; not independent or production evidence |
 
 ## Change
