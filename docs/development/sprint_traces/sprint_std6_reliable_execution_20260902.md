@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local SQLite, synthetic tool, deterministic failure evidence |
-| Commit | Pending |
+| Commit | `52a2c09` |
 
 ## Baseline risk
 

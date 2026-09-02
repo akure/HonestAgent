@@ -5,7 +5,7 @@
 | Sprint | STD-6 |
 | Change type | execution / reliability / persistence / operational controls / test |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `52a2c09` |
 | Evidence class | Local SQLite, synthetic tool, deterministic failure evidence |
 
 ## Change
