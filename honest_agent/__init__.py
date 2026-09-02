@@ -12,6 +12,7 @@ from .sdk import GuardBlocked, HonestAgent, make_request
 from .rag_workflow import RAGSafetyWorkflow, RAGWorkflowResult
 from .core.workflow_state import DurableWorkflowStateStore, WorkflowState, WorkflowStateError
 from .core.policy_composition import EffectivePolicy, EffectiveRule, PolicyCompositionError, PolicyComposer, PolicyLayer
+from .core.reliable_execution import ExecutionError, ExecutionIntent, ExecutionSemantics, IntentState, IntentStore, ReliableExecutor
 
 __all__ = [
     "ExtensionClass",
@@ -34,4 +35,10 @@ __all__ = [
     "PolicyCompositionError",
     "PolicyComposer",
     "PolicyLayer",
+    "ExecutionError",
+    "ExecutionIntent",
+    "ExecutionSemantics",
+    "IntentState",
+    "IntentStore",
+    "ReliableExecutor",
 ]

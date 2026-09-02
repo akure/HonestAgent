@@ -9,6 +9,7 @@ The current repository state is a proprietary, source-available development rele
 ### Added
 
 - Reusable `honest-agent-enterprise-sprint-delivery` skill covering one-sprint scope control, fail-closed implementation, adversarial validation, evidence discipline, and two-stage Git publication. Evidence: `skills/honest-agent-enterprise-sprint-delivery/SKILL.md`.
+- STD-6 reliable execution semantics and operational controls: durable intent inbox/outbox, explicit at-most-once/idempotent retry modes, timeout, cancellation, crash recovery, kill switches, quotas, and duplicate-side-effect tests. Evidence: `docs/development/sprint_traces/sprint_std6_reliable_execution_20260902.md`.
 - STD-5 policy composition and delegation attenuation: monotonic layered resolution, deterministic policy snapshots, conflict explanations, capability intersection, and effective budget enforcement. Evidence: `docs/development/sprint_traces/sprint_std5_policy_composition_20260901.md`.
 - STD-4 durable workflow state and human oversight: SQLite lifecycle state machine, exact approval scope, expiry/cancellation, restart persistence, and duplicate-execution rejection. Evidence: `docs/development/sprint_traces/sprint_std4_durable_workflow_state_20260901.md`.
 - STD-3 RAG safety reference workflow: offline retrieve/cite/guard/approve/resume/execute composition, tenant and injection isolation tests, and synthetic support example. Evidence: `docs/development/sprint_traces/sprint_std3_rag_safety_reference_20260901.md`.
