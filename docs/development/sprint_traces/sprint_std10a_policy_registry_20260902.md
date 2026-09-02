@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local synthetic / deployment-neutral |
-| Commit | Pending |
+| Commit | `8ef065d` |
 
 ## Baseline risk
 
@@ -26,9 +26,9 @@ The defect was an authorization-boundary omission: tenant identity and lifecycle
 | Check | Result |
 |---|---|
 | Focused STD-10A, prior registry, and policy-composition tests | PASS — 13 tests |
-| Full Python regression suite | Pending final run |
-| Python compilation | Pending final run |
-| `git diff --check` | Pending final run |
+| Full Python regression suite | PASS — 163 tests |
+| Python compilation | PASS |
+| `git diff --check` | PASS |
 
 ## Security invariants
 

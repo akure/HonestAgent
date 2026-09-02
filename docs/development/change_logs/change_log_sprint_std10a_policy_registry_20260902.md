@@ -5,7 +5,7 @@
 | Sprint | STD-10A |
 | Change type | policy registry / tenant isolation / governance |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `8ef065d` |
 | Evidence class | Local synthetic / deployment-neutral |
 
 ## Change
@@ -20,7 +20,7 @@ Hardened the existing signed policy registry rather than adding a second control
 | Prior policy-registry regressions | PASS — 6 tests |
 | Policy-composition regressions | PASS — 3 tests |
 | Combined focused result | PASS — 13 tests |
-| Full suite | Pending final run |
+| Full suite | PASS — 163 tests |
 
 ## Evidence boundary
 
