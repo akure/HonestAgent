@@ -5,7 +5,7 @@
 | Sprint | STD-10B |
 | Change type | identity / reviewer governance / tenant authorization / audit attribution |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `9ad11ac` |
 | Evidence class | Local synthetic / deployment-neutral |
 
 ## Change

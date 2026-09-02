@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local synthetic / deployment-neutral |
-| Commit | Pending |
+| Commit | `9ad11ac` |
 
 ## Baseline risk
 
