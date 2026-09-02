@@ -5,7 +5,7 @@
 | Sprint | STD-7 |
 | Change type | framework integration / lifecycle / compatibility / test |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `5937df7` |
 | Evidence class | Local synthetic adapter-boundary evidence |
 
 ## Change

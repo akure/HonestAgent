@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local synthetic adapter-boundary evidence |
-| Commit | Pending |
+| Commit | `5937df7` |
 
 ## Baseline risk
 
