@@ -7,7 +7,7 @@
 | Date | 2026-09-02 |
 | Status | Complete |
 | Evidence class | Local independent implementation and deterministic fixture evidence |
-| Commit | Pending |
+| Commit | `e3929a7` |
 
 ## Baseline risk
 

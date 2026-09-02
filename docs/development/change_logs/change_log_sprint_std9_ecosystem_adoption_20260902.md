@@ -5,7 +5,7 @@
 | Sprint | STD-9 |
 | Change type | ecosystem / protocol / TypeScript / conformance / governance |
 | Date | 2026-09-02 |
-| Related commit | Pending |
+| Related commit | `e3929a7` |
 | Evidence class | Local independent implementation and deterministic fixture evidence |
 
 ## Change
