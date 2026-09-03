@@ -5,7 +5,7 @@
 | Sprint | STD-10D |
 | Change type | operations / dashboard / alerting / kill switch |
 | Date | 2026-09-03 |
-| Related commit | Pending |
+| Related commit | `cbbd184` |
 | Evidence class | Local synthetic / deployment-neutral |
 
 ## Change
