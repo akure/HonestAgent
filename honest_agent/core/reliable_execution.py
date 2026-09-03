@@ -63,6 +63,11 @@ class IntentStore:
                     updated_at REAL NOT NULL, UNIQUE (tenant_id, tool_name, idempotency_key)
                 );
                 CREATE TABLE IF NOT EXISTS execution_controls (scope TEXT PRIMARY KEY, enabled INTEGER NOT NULL DEFAULT 1, quota INTEGER);
+                CREATE TABLE IF NOT EXISTS control_events (
+                    event_id INTEGER PRIMARY KEY AUTOINCREMENT, scope TEXT NOT NULL,
+                    action TEXT NOT NULL, enabled INTEGER, quota INTEGER,
+                    actor TEXT NOT NULL, occurred_at REAL NOT NULL
+                );
             """)
 
     def _connect(self) -> sqlite3.Connection:
@@ -173,19 +178,28 @@ class IntentStore:
                 raise ExecutionError("only executing intents can be recovered")
         return self.get(intent_id)
 
-    def set_quota(self, scope: str, quota: int | None) -> None:
+    def set_quota(self, scope: str, quota: int | None, *, actor: str = "system") -> None:
         if quota is not None and quota < 1:
             raise ValueError("quota must be positive or None")
-        if not scope.strip():
-            raise ValueError("quota scope is required")
+        if not scope.strip() or not actor.strip():
+            raise ValueError("quota scope and actor are required")
         with self._connect() as connection:
             connection.execute("INSERT INTO execution_controls(scope, enabled, quota) VALUES (?, 1, ?) ON CONFLICT(scope) DO UPDATE SET quota = excluded.quota", (scope, quota))
+            connection.execute("INSERT INTO control_events(scope, action, quota, actor, occurred_at) VALUES (?, ?, ?, ?, ?)", (scope, "SET_QUOTA", quota, actor, time.time()))
 
-    def set_kill_switch(self, scope: str, enabled: bool = False) -> None:
-        if not scope.strip():
-            raise ValueError("kill-switch scope is required")
+    def set_kill_switch(self, scope: str, enabled: bool = False, *, actor: str = "system") -> None:
+        if not scope.strip() or not actor.strip():
+            raise ValueError("kill-switch scope and actor are required")
         with self._connect() as connection:
             connection.execute("INSERT INTO execution_controls(scope, enabled) VALUES (?, ?) ON CONFLICT(scope) DO UPDATE SET enabled = excluded.enabled", (scope, int(enabled)))
+            connection.execute("INSERT INTO control_events(scope, action, enabled, actor, occurred_at) VALUES (?, ?, ?, ?, ?)", (scope, "ENABLE_KILL_SWITCH" if not enabled else "DISABLE_KILL_SWITCH", int(enabled), actor, time.time()))
+
+    def operational_snapshot(self) -> dict[str, Any]:
+        with self._connect() as connection:
+            states = {row["state"]: row["count"] for row in connection.execute("SELECT state, COUNT(*) AS count FROM execution_intents GROUP BY state")}
+            controls = [dict(row) for row in connection.execute("SELECT scope, enabled, quota FROM execution_controls ORDER BY scope")]
+            events = [dict(row) for row in connection.execute("SELECT event_id, scope, action, enabled, quota, actor, occurred_at FROM control_events ORDER BY event_id DESC LIMIT 100")]
+        return {"intents": {"total": sum(states.values()), "by_state": states}, "controls": controls, "control_events": events}
 
 
 class ReliableExecutor:
