@@ -7,7 +7,7 @@
 | Date | 2026-09-03 |
 | Status | Complete |
 | Evidence class | Local synthetic / source-packaging verification |
-| Commit | Pending |
+| Commit | `37f5576` |
 
 ## Baseline risk
 

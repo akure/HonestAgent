@@ -5,7 +5,7 @@
 | Sprint | STD-10F |
 | Change type | release packaging / provenance / tool availability |
 | Date | 2026-09-03 |
-| Related commit | Pending |
+| Related commit | `37f5576` |
 | Evidence class | Local synthetic / source-packaging verification |
 
 ## Change
