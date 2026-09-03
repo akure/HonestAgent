@@ -8,6 +8,7 @@ from typing import Any, Iterable
 
 REQUIRED_FILES = ("Dockerfile", "pyproject.toml", "requirements.txt", "LICENSE", "SECURITY.md")
 PACKAGING_TOOLS = ("docker", "podman", "syft", "trivy", "grype", "pip-audit")
+STD10G_TOOLS = ("docker", "podman", "syft", "cosign", "trivy", "grype", "pip-audit", "kubectl", "helm")
 
 
 def source_manifest_hash(root: str | Path, files: Iterable[str] | None = None) -> str:
@@ -49,4 +50,26 @@ def verify_release_inputs(root: str | Path) -> dict[str, Any]:
     }
 
 
-__all__ = ["PACKAGING_TOOLS", "REQUIRED_FILES", "source_manifest_hash", "verify_release_inputs"]
+def verify_std10g_prerequisites() -> dict[str, Any]:
+    """Return a conservative gate; never run a partial release workflow."""
+    tools = {tool: shutil.which(tool) is not None for tool in STD10G_TOOLS}
+    missing = [tool for tool, available in tools.items() if not available]
+    builder = tools["docker"] or tools["podman"]
+    scanner = tools["trivy"] or tools["grype"] or tools["pip-audit"]
+    return {
+        "gate_version": "std10g-v1",
+        "tools": tools,
+        "required_capabilities": {
+            "image_builder": builder,
+            "sbom_generator": tools["syft"],
+            "image_signer": tools["cosign"],
+            "vulnerability_scanner": scanner,
+            "deployment_client": tools["kubectl"] or tools["helm"],
+        },
+        "missing_tools": missing,
+        "status": "READY" if not missing else "BLOCKED",
+        "action": "NO_RELEASE_EXECUTION" if missing else "REQUIRES_APPROVED_TARGET_AND_CREDENTIALS",
+    }
+
+
+__all__ = ["PACKAGING_TOOLS", "REQUIRED_FILES", "STD10G_TOOLS", "source_manifest_hash", "verify_release_inputs", "verify_std10g_prerequisites"]
