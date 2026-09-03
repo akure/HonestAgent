@@ -5,7 +5,7 @@
 | Sprint | STD-10E |
 | Change type | deployment / packaging / commercial boundary / configuration safety |
 | Date | 2026-09-03 |
-| Related commit | Pending |
+| Related commit | `30edcfc` |
 | Evidence class | Local synthetic / deployment-neutral |
 
 ## Change
