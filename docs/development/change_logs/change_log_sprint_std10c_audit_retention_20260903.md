@@ -5,7 +5,7 @@
 | Sprint | STD-10C |
 | Change type | audit / integrity / durability / retention / retrieval |
 | Date | 2026-09-03 |
-| Related commit | Pending |
+| Related commit | `adddbe5` |
 | Evidence class | Local synthetic / deployment-neutral |
 
 ## Change

@@ -7,7 +7,7 @@
 | Date | 2026-09-03 |
 | Status | Complete |
 | Evidence class | Local synthetic / deployment-neutral |
-| Commit | Pending |
+| Commit | `adddbe5` |
 
 ## Baseline risk
 
