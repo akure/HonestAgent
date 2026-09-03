@@ -5,7 +5,7 @@
 | Sprint | STD-10G |
 | Change type | release gate / image build / SBOM / signing / vulnerability / rehearsal |
 | Date | 2026-09-04 |
-| Related commit | Pending |
+| Related commit | `2977bd7` |
 | Evidence class | Local environment capability check |
 | Status | Blocked |
 

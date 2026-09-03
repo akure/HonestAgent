@@ -7,7 +7,7 @@
 | Date | 2026-09-04 |
 | Status | Blocked |
 | Evidence class | Local environment capability check |
-| Commit | Pending |
+| Commit | `2977bd7` |
 
 ## Baseline risk
 
