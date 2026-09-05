@@ -34,6 +34,10 @@ Use this skill to turn one approved sprint into a small, tested, documented, rev
 - For audit changes, preserve redaction, hash-chain verification, append serialization, durability boundaries, and non-destructive retention unless the approved scope explicitly changes them.
 - For identity changes, preserve authenticated-principal precedence over request-body identity and test expiry, role, tenant, token, roster, and subject revocation.
 - For operational changes, ensure dashboards are read-only, alerts do not authorize execution, and kill switches are enforced transactionally before claim/execution.
+- For release-packaging changes, inventory real tools before execution. Never replace an unavailable builder, SBOM generator, signer, scanner, registry, or deployment client with an unmarked mock. If any required capability is unavailable, implement or run a fail-closed prerequisite gate and record the checkpoint as `BLOCKED`.
+- Separate orchestration simulation from release evidence. Stubs may test ordering, digest binding, failure handling, rollback logic, and artifact schema, but they must never establish image provenance, SBOM validity, signature trust, vulnerability posture, deployment success, or production readiness.
+- For production migration reports, summarize all completed checkpoints, state the current release decision, identify target-environment gaps, and provide owners, evidence, rollback, and sign-off criteria. Do not promote local synthetic evidence to pilot or production evidence.
+- When an executive presentation is requested, use the Slides skill/tooling, keep claims traceable to repository evidence, label blocked or unmeasured gates visibly, and deliver the deck only after every slide is authored and presented successfully.
 
 ## Evidence template
 
