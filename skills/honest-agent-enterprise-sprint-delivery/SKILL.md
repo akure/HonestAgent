@@ -41,6 +41,7 @@ Use this skill to turn one approved sprint into a small, tested, documented, rev
 - When reviewing a conditional-pilot acceptance gate, test each automatic no-go trigger against the actual evidence. Treat `NOT RUN` as missing evidence, require a written non-applicability rationale with owner, compensating control, expiry, and re-review date, and prohibit exceptions from waiving automatic no-go conditions.
 - Require sign-off roles for business accountability, technical ownership, security, platform/SRE, privacy/compliance, and release evidence completeness. Record the approved commit, immutable image digest, policy version, pilot window, evidence-bundle hash/location, open exceptions, expiry, and signatures.
 - When walking through a release runbook, execute the exact command in the current environment, capture stdout/stderr and exit code, identify the first failed prerequisite, and stop. Never infer Docker, Trivy, Cosign, SBOM, registry, or deployment results from tool absence or from a mock.
+- For cross-platform enablement, provide a clean manual that separates Linux, Windows/WSL2, and macOS provisioning, pins tool versions, validates Docker/Trivy/Cosign/Syft, explains registry and signing modes, preserves an evidence bundle, and distinguishes laptop evidence from target-like deployment evidence.
 
 ## Evidence template
 
