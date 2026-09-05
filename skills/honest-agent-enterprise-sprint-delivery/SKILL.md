@@ -38,6 +38,9 @@ Use this skill to turn one approved sprint into a small, tested, documented, rev
 - Separate orchestration simulation from release evidence. Stubs may test ordering, digest binding, failure handling, rollback logic, and artifact schema, but they must never establish image provenance, SBOM validity, signature trust, vulnerability posture, deployment success, or production readiness.
 - For production migration reports, summarize all completed checkpoints, state the current release decision, identify target-environment gaps, and provide owners, evidence, rollback, and sign-off criteria. Do not promote local synthetic evidence to pilot or production evidence.
 - When an executive presentation is requested, use the Slides skill/tooling, keep claims traceable to repository evidence, label blocked or unmeasured gates visibly, and deliver the deck only after every slide is authored and presented successfully.
+- When reviewing a conditional-pilot acceptance gate, test each automatic no-go trigger against the actual evidence. Treat `NOT RUN` as missing evidence, require a written non-applicability rationale with owner, compensating control, expiry, and re-review date, and prohibit exceptions from waiving automatic no-go conditions.
+- Require sign-off roles for business accountability, technical ownership, security, platform/SRE, privacy/compliance, and release evidence completeness. Record the approved commit, immutable image digest, policy version, pilot window, evidence-bundle hash/location, open exceptions, expiry, and signatures.
+- When walking through a release runbook, execute the exact command in the current environment, capture stdout/stderr and exit code, identify the first failed prerequisite, and stop. Never infer Docker, Trivy, Cosign, SBOM, registry, or deployment results from tool absence or from a mock.
 
 ## Evidence template
 

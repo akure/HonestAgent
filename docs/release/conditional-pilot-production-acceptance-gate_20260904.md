@@ -80,6 +80,14 @@ One person may hold multiple roles only when the organization’s separation-of-
 
 ## G. Decision criteria
 
+## Gate review outcome
+
+The automatic no-go triggers are appropriately fail-closed and cover the highest-impact failure modes: missing evidence, unavailable target capability, critical vulnerabilities, credential exposure, executor bypass, unsafe egress, unverifiable audit, failed stop control, and failed rollback. The sign-off roles are also sufficient for a conditional pilot because they assign accountability across business, technical, security, platform, privacy, and release concerns.
+
+Two clarifications are mandatory in every completed decision record. First, a gate marked `NOT RUN` is missing evidence, not an implicit pass. Second, a non-applicable gate requires a written rationale, named approver, compensating control, expiry date, and re-review owner. A mock or stub may demonstrate control-flow behavior but cannot satisfy a production-evidence gate.
+
+The current repository state does not satisfy this gate: the STD-10G real-tool and target-environment rows remain `NOT RUN`, so the decision remains `NO-GO` for unrestricted production.
+
 ### Conditional pilot — approve only when all are true
 
 1. Every mandatory gate above is `PASS` or has an approved, documented non-applicability decision.
@@ -89,6 +97,8 @@ One person may hold multiple roles only when the organization’s separation-of-
 5. Identity, secrets, audit, monitoring, and kill-switch drills pass.
 6. No critical vulnerability, credential exposure, executor bypass, unsafe egress, or unresolved integrity failure exists.
 7. The accountable owner signs residual risk and the release owner signs evidence completeness.
+
+The final decision record must include the evidence bundle hash or immutable location, the approved image digest, policy version, pilot expiry, open exceptions, and all required signatures. An exception cannot waive an automatic no-go trigger; it can only document a non-applicable control where the gate explicitly permits that treatment.
 
 ### No-go conditions
 
