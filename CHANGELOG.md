@@ -8,6 +8,7 @@ The current repository state is a proprietary, source-available development rele
 
 ### Added
 
+- Framework mini-use-case samples for LangGraph, CrewAI, AutoGen/AG2, LangChain, LlamaIndex, and LangSmith-style observability. The examples demonstrate proceed versus pause behavior, request-bound handoffs, redacted telemetry, and safe integration boundaries using synthetic credential-free demos. Evidence: `examples/README.md` and `docs/development/sprint_traces/sprint_framework_mini_use_cases_20261006.md`.
 - Reusable `honest-agent-enterprise-sprint-delivery` skill covering one-sprint scope control, fail-closed implementation, adversarial validation, evidence discipline, and two-stage Git publication. Evidence: `skills/honest-agent-enterprise-sprint-delivery/SKILL.md`.
 - STD-6 reliable execution semantics and operational controls: durable intent inbox/outbox, explicit at-most-once/idempotent retry modes, timeout, cancellation, crash recovery, kill switches, quotas, and duplicate-side-effect tests. Evidence: `docs/development/sprint_traces/sprint_std6_reliable_execution_20260902.md`.
 - STD-7 version-pinned framework integration boundary: explicit LangGraph/RAG support metadata, unsupported-version rejection, native pause/resume/cancellation, and request-bound handoff tests. Actual package compatibility remains explicitly unmeasured. Evidence: `docs/development/sprint_traces/sprint_std7_framework_integrations_20260902.md`.

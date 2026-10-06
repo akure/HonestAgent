@@ -1,0 +1,2 @@
+# Optional production integration only; the local demo intentionally has no dependency.
+# langsmith>=0.2
